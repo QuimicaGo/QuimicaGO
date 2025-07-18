@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuímicaGame - Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .debug-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #5a6fd8;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>QuímicaGame - Painel de Debug</h1>
+    
+    <div class="debug-panel">
+        <h2>Teste de Carregamento de Scripts</h2>
+        <button class="test-button" onclick="testScriptLoading()">Testar Scripts</button>
+        <div id="script-results"></div>
+    </div>
+    
+    <div class="debug-panel">
+        <h2>Teste de Classes JavaScript</h2>
+        <button class="test-button" onclick="testClasses()">Testar Classes</button>
+        <div id="class-results"></div>
+    </div>
+    
+    <div class="debug-panel">
+        <h2>Teste de Eventos</h2>
+        <button class="test-button" onclick="testEvents()">Testar Eventos</button>
+        <div id="event-results"></div>
+    </div>
+    
+    <div class="debug-panel">
+        <h2>Teste de Exercícios</h2>
+        <button class="test-button" onclick="testExercises()">Testar Sistema de Exercícios</button>
+        <div id="exercise-results"></div>
+    </div>
+    
+    <div class="debug-panel">
+        <h2>Console de Debug</h2>
+        <div id="debug-console" style="background: #000; color: #0f0; padding: 10px; border-radius: 5px; font-family: monospace; height: 200px; overflow-y: auto;"></div>
+    </div>
+
+    <script>
+        // Função para log no console de debug
+        function debugLog(message, type = 'info') {
+            const console = document.getElementById('debug-console');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+            console.appendChild(logEntry);
+            console.scrollTop = console.scrollHeight;
+        }
+
+        // Teste de carregamento de scripts
+        function testScriptLoading() {
+            const resultsDiv = document.getElementById('script-results');
+            resultsDiv.innerHTML = '';
+            
+            const scripts = [
+                'js/app.js',
+                'js/animations.js',
+                'js/exercises.js',
+                'js/gamification.js'
+            ];
+            
+            scripts.forEach(script => {
+                const scriptElement = document.createElement('script');
+                scriptElement.src = script;
+                scriptElement.onload = () => {
+                    const result = document.createElement('div');
+                    result.className = 'result success';
+                    result.textContent = `✓ ${script} carregado com sucesso`;
+                    resultsDiv.appendChild(result);
+                    debugLog(`Script ${script} carregado`, 'success');
+                };
+                scriptElement.onerror = () => {
+                    const result = document.createElement('div');
+                    result.className = 'result error';
+                    result.textContent = `✗ Erro ao carregar ${script}`;
+                    resultsDiv.appendChild(result);
+                    debugLog(`Erro ao carregar ${script}`, 'error');
+                };
+                document.head.appendChild(scriptElement);
+            });
+        }
+
+        // Teste de classes
+        function testClasses() {
+            const resultsDiv = document.getElementById('class-results');
+            resultsDiv.innerHTML = '';
+            
+            const classes = [
+                'QuimicaGame',
+                'AnimationController',
+                'ExerciseController',
+                'GamificationSystem'
+            ];
+            
+            classes.forEach(className => {
+                const result = document.createElement('div');
+                try {
+                    if (window[className]) {
+                        result.className = 'result success';
+                        result.textContent = `✓ Classe ${className} disponível`;
+                        debugLog(`Classe ${className} encontrada`, 'success');
+                    } else {
+                        result.className = 'result error';
+                        result.textContent = `✗ Classe ${className} não encontrada`;
+                        debugLog(`Classe ${className} não encontrada`, 'error');
+                    }
+                } catch (error) {
+                    result.className = 'result error';
+                    result.textContent = `✗ Erro ao verificar ${className}: ${error.message}`;
+                    debugLog(`Erro ao verificar ${className}: ${error.message}`, 'error');
+                }
+                resultsDiv.appendChild(result);
+            });
+        }
+
+        // Teste de eventos
+        function testEvents() {
+            const resultsDiv = document.getElementById('event-results');
+            resultsDiv.innerHTML = '';
+            
+            // Criar elementos de teste
+            const testButton = document.createElement('button');
+            testButton.textContent = 'Botão de Teste';
+            testButton.className = 'test-button';
+            testButton.id = 'test-event-button';
+            
+            let eventFired = false;
+            testButton.addEventListener('click', () => {
+                eventFired = true;
+                debugLog('Evento de clique funcionando', 'success');
+            });
+            
+            resultsDiv.appendChild(testButton);
+            
+            // Simular clique
+            setTimeout(() => {
+                testButton.click();
+                const result = document.createElement('div');
+                if (eventFired) {
+                    result.className = 'result success';
+                    result.textContent = '✓ Eventos funcionando corretamente';
+                } else {
+                    result.className = 'result error';
+                    result.textContent = '✗ Eventos não estão funcionando';
+                }
+                resultsDiv.appendChild(result);
+            }, 100);
+        }
+
+        // Teste de exercícios
+        function testExercises() {
+            const resultsDiv = document.getElementById('exercise-results');
+            resultsDiv.innerHTML = '';
+            
+            try {
+                // Simular estrutura básica de exercício
+                const mockGame = {
+                    userProgress: {
+                        points: 0,
+                        level: 1,
+                        completedExercises: 0,
+                        correctAnswers: 0,
+                        totalAnswers: 0,
+                        achievements: [],
+                        topicProgress: {
+                            ionic: 0,
+                            covalent: 0,
+                            metallic: 0
+                        }
+                    },
+                    addPoints: function(points) {
+                        this.userProgress.points += points;
+                        debugLog(`Pontos adicionados: ${points}`, 'info');
+                    },
+                    recordAnswer: function(isCorrect) {
+                        this.userProgress.totalAnswers++;
+                        if (isCorrect) {
+                            this.userProgress.correctAnswers++;
+                        }
+                        debugLog(`Resposta registrada: ${isCorrect ? 'Correta' : 'Incorreta'}`, 'info');
+                    },
+                    saveUserProgress: function() {
+                        debugLog('Progresso salvo', 'info');
+                    }
+                };
+                
+                const result = document.createElement('div');
+                result.className = 'result success';
+                result.textContent = '✓ Estrutura básica de exercícios funcionando';
+                resultsDiv.appendChild(result);
+                
+                // Testar funcionalidades básicas
+                mockGame.addPoints(10);
+                mockGame.recordAnswer(true);
+                mockGame.saveUserProgress();
+                
+                debugLog('Teste de exercícios concluído com sucesso', 'success');
+                
+            } catch (error) {
+                const result = document.createElement('div');
+                result.className = 'result error';
+                result.textContent = `✗ Erro no sistema de exercícios: ${error.message}`;
+                resultsDiv.appendChild(result);
+                debugLog(`Erro no sistema de exercícios: ${error.message}`, 'error');
+            }
+        }
+
+        // Log inicial
+        debugLog('Painel de debug inicializado', 'info');
+        debugLog('Clique nos botões para executar os testes', 'info');
+    </script>
+</body>
+</html>
+

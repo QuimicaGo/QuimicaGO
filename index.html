@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuímicaGame - Ligações Químicas</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-atom"></i>
+                <h1>QuímicaGame</h1>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#home" class="nav-link active">Início</a></li>
+                    <li><a href="#animation" class="nav-link">Animações</a></li>
+                    <li><a href="#exercises" class="nav-link">Exercícios</a></li>
+                    <li><a href="#progress" class="nav-link">Progresso</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                <div class="level-badge">
+                    <i class="fas fa-star"></i>
+                    <span>Nível 1</span>
+                </div>
+                <div class="points">
+                    <i class="fas fa-coins"></i>
+                    <span id="user-points">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="container">
+                <div class="hero">
+                    <div class="hero-content">
+                        <h2>Aprenda Ligações Químicas de Forma Divertida!</h2>
+                        <p>Explore o mundo das ligações químicas através de animações interativas e exercícios gamificados.</p>
+                        <div class="hero-buttons">
+                            <button class="btn btn-primary" onclick="showSection('animation')">
+                                <i class="fas fa-play"></i>
+                                Começar Animação
+                            </button>
+                            <button class="btn btn-secondary" onclick="showSection('exercises')">
+                                <i class="fas fa-gamepad"></i>
+                                Fazer Exercícios
+                            </button>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="molecule-preview">
+                            <div class="atom sodium">Na</div>
+                            <div class="electron-transfer"></div>
+                            <div class="atom chlorine">Cl</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Overview -->
+                <div class="progress-overview">
+                    <h3>Seu Progresso</h3>
+                    <div class="progress-cards">
+                        <div class="progress-card">
+                            <div class="progress-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="progress-info">
+                                <h4>Ligação Iônica</h4>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <span>0% completo</span>
+                            </div>
+                        </div>
+                        <div class="progress-card">
+                            <div class="progress-icon">
+                                <i class="fas fa-link"></i>
+                            </div>
+                            <div class="progress-info">
+                                <h4>Ligação Covalente</h4>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <span>0% completo</span>
+                            </div>
+                        </div>
+                        <div class="progress-card">
+                            <div class="progress-icon">
+                                <i class="fas fa-cubes"></i>
+                            </div>
+                            <div class="progress-info">
+                                <h4>Ligação Metálica</h4>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <span>0% completo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Animation Section -->
+        <section id="animation" class="section">
+            <div class="container">
+                <h2>Animações Interativas</h2>
+                <div class="animation-controls">
+                    <div class="animation-tabs">
+                        <button class="tab-btn active" data-animation="ionic">Ligação Iônica</button>
+                        <button class="tab-btn" data-animation="covalent">Ligação Covalente</button>
+                        <button class="tab-btn" data-animation="metallic">Ligação Metálica</button>
+                    </div>
+                </div>
+                
+                <div class="animation-container">
+                    <div id="animation-canvas">
+                        <!-- Animação será renderizada aqui -->
+                    </div>
+                    
+                    <div class="animation-controls-panel">
+                        <button id="play-btn" class="control-btn">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button id="pause-btn" class="control-btn">
+                            <i class="fas fa-pause"></i>
+                        </button>
+                        <button id="reset-btn" class="control-btn">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <div class="speed-control">
+                            <label>Velocidade:</label>
+                            <input type="range" id="speed-slider" min="0.5" max="2" step="0.1" value="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animation-info">
+                    <div class="info-panel">
+                        <h3 id="animation-title">Ligação Iônica</h3>
+                        <p id="animation-description">
+                            A ligação iônica ocorre entre um metal e um ametal, onde há transferência de elétrons.
+                        </p>
+                        <div class="key-concepts">
+                            <h4>Conceitos Chave:</h4>
+                            <ul id="key-concepts-list">
+                                <li>Transferência de elétrons</li>
+                                <li>Formação de íons</li>
+                                <li>Atração eletrostática</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercises Section -->
+        <section id="exercises" class="section">
+            <div class="container">
+                <h2>Exercícios Gamificados</h2>
+                
+                <div class="difficulty-selector">
+                    <h3>Escolha o Nível de Dificuldade:</h3>
+                    <div class="difficulty-buttons">
+                        <button class="difficulty-btn easy active" data-level="easy">
+                            <i class="fas fa-seedling"></i>
+                            <span>Fácil</span>
+                            <small>Conceitos básicos</small>
+                        </button>
+                        <button class="difficulty-btn medium" data-level="medium">
+                            <i class="fas fa-fire"></i>
+                            <span>Médio</span>
+                            <small>Aplicação de regras</small>
+                        </button>
+                        <button class="difficulty-btn hard" data-level="hard">
+                            <i class="fas fa-crown"></i>
+                            <span>Difícil</span>
+                            <small>Análise complexa</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="exercise-container">
+                    <div class="exercise-header">
+                        <div class="exercise-progress">
+                            <span>Questão <span id="current-question">1</span> de <span id="total-questions">5</span></span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="exercise-progress"></div>
+                            </div>
+                        </div>
+                        <div class="exercise-score">
+                            <i class="fas fa-star"></i>
+                            <span id="current-score">0</span> pontos
+                        </div>
+                    </div>
+
+                    <div class="question-container">
+                        <div class="question">
+                            <h3 id="question-text">Carregando questão...</h3>
+                            <div class="question-image" id="question-image" style="display: none;">
+                                <!-- Imagem da questão, se houver -->
+                            </div>
+                        </div>
+
+                        <div class="answers">
+                            <div class="answer-options" id="answer-options">
+                                <!-- Opções de resposta serão inseridas aqui -->
+                            </div>
+                        </div>
+
+                        <div class="question-actions">
+                            <button id="submit-answer" class="btn btn-primary" disabled>
+                                Confirmar Resposta
+                            </button>
+                            <button id="next-question" class="btn btn-secondary" style="display: none;">
+                                Próxima Questão
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="feedback-container" id="feedback-container" style="display: none;">
+                        <div class="feedback-content">
+                            <div class="feedback-icon">
+                                <i id="feedback-icon"></i>
+                            </div>
+                            <h4 id="feedback-title"></h4>
+                            <p id="feedback-text"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Section -->
+        <section id="progress" class="section">
+            <div class="container">
+                <h2>Seu Progresso</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-points">0</h3>
+                            <p>Pontos Totais</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="completed-exercises">0</h3>
+                            <p>Exercícios Concluídos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="accuracy-rate">0%</h3>
+                            <p>Taxa de Acerto</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="achievements-count">0</h3>
+                            <p>Conquistas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="achievements-section">
+                    <h3>Conquistas</h3>
+                    <div class="achievements-grid" id="achievements-grid">
+                        <!-- Conquistas serão inseridas aqui -->
+                    </div>
+                </div>
+
+                <div class="detailed-progress">
+                    <h3>Progresso Detalhado</h3>
+                    <div class="topic-progress">
+                        <div class="topic-item">
+                            <h4>Ligação Iônica</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="ionic-progress"></div>
+                            </div>
+                            <span class="progress-text">0/10 exercícios</span>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <h4>Ligação Covalente</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="covalent-progress"></div>
+                            </div>
+                            <span class="progress-text">0/10 exercícios</span>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <h4>Ligação Metálica</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="metallic-progress"></div>
+                            </div>
+                            <span class="progress-text">0/5 exercícios</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 QuímicaGame - Desenvolvido para o ensino de Química no Ensino Médio</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/app-fixed.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/exercises.js"></script>
+    <script src="js/gamification.js"></script>
+</body>
+</html>
+
