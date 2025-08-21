@@ -475,6 +475,15 @@ class QuimicaGame {
         this.updateTopicProgress();
     }
 
+    getTopicProgressPercentage(topic) {
+        const maxExercises = { ionic: 10, covalent: 10, metallic: 5 };
+        const progress = this.userProgress.topicProgress[topic] || 0;
+        const max = maxExercises[topic] || 1;
+        const percentage = (progress / max) * 100;
+
+        return Math.max(0, Math.min(percentage, 100));
+    }
+
     updateTopicProgress() {
         const topics = ['ionic', 'covalent', 'metallic'];
         const maxExercises = { ionic: 10, covalent: 10, metallic: 5 };
@@ -482,8 +491,8 @@ class QuimicaGame {
         topics.forEach(topic => {
             const progress = this.userProgress.topicProgress[topic];
             const max = maxExercises[topic];
-            const percentage = (progress / max) * 100;
-
+            const percentage = this.getTopicProgressPercentage(topic);
+            
             const progressBar = document.getElementById(`${topic}-progress`);
             if (progressBar) {
                 progressBar.style.width = `${percentage}%`;
@@ -520,13 +529,13 @@ class QuimicaGame {
             if (topic && this.userProgress.topicProgress[topic] !== undefined) {
                 const progress = this.userProgress.topicProgress[topic];
                 const max = maxExercises[topic];
-                const percentage = (progress / max) * 100;
+                const percentage = this.getTopicProgressPercentage(topic);
                 
                 const progressBar = card.querySelector('.progress-fill');
                 const progressText = card.querySelector('span');
                 
                 if (progressBar) progressBar.style.width = `${percentage}%`;
-                if (progressText) progressText.textContent = `${percentage.toFixed(0)}% completo`;
+                if (progressText) progressText.textContent = `${Math.round(percentage)}% completo`;
             }
         });
     }

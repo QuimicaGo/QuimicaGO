@@ -1,4 +1,5 @@
 // Aplicação Principal - QuímicaGame
+//Esse arquivo js é o antigo, nao ta linkado no html, olhar pro app-fixed.js
 class QuimicaGame {
     constructor() {
         this.currentSection = 'home';
