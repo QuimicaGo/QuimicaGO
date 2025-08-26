@@ -15,7 +15,7 @@ class QuimicaGame {
                 metallic: 0
             }
         };
-        
+
         console.log('QuimicaGame: Construtor chamado');
         this.init();
     }
@@ -31,7 +31,7 @@ class QuimicaGame {
 
     setupEventListeners() {
         console.log('QuimicaGame: Configurando event listeners...');
-        
+
         // Aguardar DOM estar pronto
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
@@ -44,11 +44,11 @@ class QuimicaGame {
 
     bindEvents() {
         console.log('QuimicaGame: Vinculando eventos...');
-        
+
         // Navegação
         const navLinks = document.querySelectorAll('.nav-link');
         console.log(`QuimicaGame: Encontrados ${navLinks.length} links de navegação`);
-        
+
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -61,7 +61,7 @@ class QuimicaGame {
         // Botões da hero section
         const heroButtons = document.querySelectorAll('.hero-buttons .btn');
         console.log(`QuimicaGame: Encontrados ${heroButtons.length} botões hero`);
-        
+
         heroButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -80,7 +80,7 @@ class QuimicaGame {
         // Tabs de animação
         const tabBtns = document.querySelectorAll('.tab-btn');
         console.log(`QuimicaGame: Encontrados ${tabBtns.length} botões de tab`);
-        
+
         tabBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const animationType = btn.dataset.animation;
@@ -95,7 +95,7 @@ class QuimicaGame {
         // Seleção de dificuldade
         const difficultyBtns = document.querySelectorAll('.difficulty-btn');
         console.log(`QuimicaGame: Encontrados ${difficultyBtns.length} botões de dificuldade`);
-        
+
         difficultyBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const level = btn.dataset.level;
@@ -173,7 +173,7 @@ class QuimicaGame {
 
     showSection(sectionName) {
         console.log(`QuimicaGame: Mostrando seção ${sectionName}`);
-        
+
         // Esconder todas as seções
         const sections = document.querySelectorAll('.section');
         sections.forEach(section => {
@@ -205,7 +205,7 @@ class QuimicaGame {
 
     onSectionChange(sectionName) {
         console.log(`QuimicaGame: Mudança para seção ${sectionName}`);
-        
+
         switch (sectionName) {
             case 'animation':
                 this.initializeAnimations();
@@ -221,13 +221,13 @@ class QuimicaGame {
 
     switchAnimationTab(animationType) {
         console.log(`QuimicaGame: Mudando para animação ${animationType}`);
-        
+
         // Atualizar tabs ativas
         const tabBtns = document.querySelectorAll('.tab-btn');
         tabBtns.forEach(btn => {
             btn.classList.remove('active');
         });
-        
+
         const activeTab = document.querySelector(`[data-animation="${animationType}"]`);
         if (activeTab) {
             activeTab.classList.add('active');
@@ -235,7 +235,7 @@ class QuimicaGame {
 
         // Atualizar informações da animação
         this.updateAnimationInfo(animationType);
-        
+
         // Resetar animação
         this.resetAnimation();
     }
@@ -283,7 +283,7 @@ class QuimicaGame {
 
         if (titleElement) titleElement.textContent = data.title;
         if (descElement) descElement.textContent = data.description;
-        
+
         if (conceptsList) {
             conceptsList.innerHTML = '';
             data.concepts.forEach(concept => {
@@ -338,13 +338,13 @@ class QuimicaGame {
 
     selectDifficulty(level) {
         console.log(`QuimicaGame: Selecionando dificuldade ${level}`);
-        
+
         // Atualizar botões de dificuldade
         const difficultyBtns = document.querySelectorAll('.difficulty-btn');
         difficultyBtns.forEach(btn => {
             btn.classList.remove('active');
         });
-        
+
         const activeBtn = document.querySelector(`[data-level="${level}"]`);
         if (activeBtn) {
             activeBtn.classList.add('active');
@@ -374,16 +374,16 @@ class QuimicaGame {
     // Métodos de exercícios simplificados para teste
     selectAnswer(optionElement) {
         console.log('QuimicaGame: Selecionando resposta');
-        
+
         // Remover seleção anterior
         const options = document.querySelectorAll('.answer-option');
         options.forEach(option => {
             option.classList.remove('selected');
         });
-        
+
         // Selecionar nova opção
         optionElement.classList.add('selected');
-        
+
         // Habilitar botão de confirmar
         const submitBtn = document.getElementById('submit-answer');
         if (submitBtn) {
@@ -393,7 +393,7 @@ class QuimicaGame {
 
     submitAnswer() {
         console.log('QuimicaGame: Submetendo resposta');
-        
+
         const selectedOption = document.querySelector('.answer-option.selected');
         if (!selectedOption) {
             console.warn('QuimicaGame: Nenhuma resposta selecionada');
@@ -418,19 +418,19 @@ class QuimicaGame {
         // Mostrar botão de próxima questão
         const nextBtn = document.getElementById('next-question');
         const submitBtn = document.getElementById('submit-answer');
-        
+
         if (nextBtn) nextBtn.style.display = 'inline-flex';
         if (submitBtn) submitBtn.style.display = 'none';
     }
 
     nextQuestion() {
         console.log('QuimicaGame: Próxima questão');
-        
+
         // Resetar interface
         const feedbackContainer = document.getElementById('feedback-container');
         const nextBtn = document.getElementById('next-question');
         const submitBtn = document.getElementById('submit-answer');
-        
+
         if (feedbackContainer) feedbackContainer.style.display = 'none';
         if (nextBtn) nextBtn.style.display = 'none';
         if (submitBtn) {
@@ -447,7 +447,7 @@ class QuimicaGame {
 
     updateProgressSection() {
         console.log('QuimicaGame: Atualizando seção de progresso');
-        
+
         // Atualizar estatísticas básicas
         const elements = {
             'total-points': this.userProgress.points,
@@ -463,10 +463,10 @@ class QuimicaGame {
         });
 
         // Calcular taxa de acerto
-        const accuracyRate = this.userProgress.totalAnswers > 0 
+        const accuracyRate = this.userProgress.totalAnswers > 0
             ? Math.round((this.userProgress.correctAnswers / this.userProgress.totalAnswers) * 100)
             : 0;
-        
+
         const accuracyElement = document.getElementById('accuracy-rate');
         if (accuracyElement) {
             accuracyElement.textContent = `${accuracyRate}%`;
@@ -493,15 +493,15 @@ class QuimicaGame {
 
     updateUI() {
         console.log('QuimicaGame: Atualizando UI');
-        
+
         // Atualizar pontos e nível no header
         const pointsElement = document.getElementById('user-points');
         const levelElement = document.querySelector('.level-badge span');
-        
+
         if (pointsElement) {
             pointsElement.textContent = this.userProgress.points;
         }
-        
+
         if (levelElement) {
             levelElement.textContent = `Nível ${this.userProgress.level}`;
         }
@@ -514,17 +514,17 @@ class QuimicaGame {
         const progressCards = document.querySelectorAll('.progress-card');
         const topics = ['ionic', 'covalent', 'metallic'];
         const maxExercises = { ionic: 10, covalent: 10, metallic: 5 };
-        
+
         progressCards.forEach((card, index) => {
             const topic = topics[index];
             if (topic && this.userProgress.topicProgress[topic] !== undefined) {
                 const progress = this.userProgress.topicProgress[topic];
                 const max = maxExercises[topic];
                 const percentage = (progress / max) * 100;
-                
+
                 const progressBar = card.querySelector('.progress-fill');
                 const progressText = card.querySelector('span');
-                
+
                 if (progressBar) progressBar.style.width = `${percentage}%`;
                 if (progressText) progressText.textContent = `${percentage.toFixed(0)}% completo`;
             }

@@ -3,7 +3,7 @@ class AnimationController {
     constructor() {
         this.canvas = document.getElementById('animation-canvas');
         this.currentAnimation = 'ionic';
-        this.isPlaying = false;
+        this.isPlaying = true;
         this.isPaused = false;
         this.speed = 1;
         this.animationFrame = null;
@@ -69,7 +69,7 @@ class AnimationController {
                 
                 <!-- Informações da animação -->
                 <g id="info-group">
-                    <rect x="10" y="10" width="200" height="80" rx="10" fill="rgba(255,255,255,0.9)" stroke="#667eea" stroke-width="2"/>
+                    <rect x="10" y="10" width="300" height="80" rx="10" fill="rgba(255,255,255,0.9)" stroke="#667eea" stroke-width="2"/>
                     <text id="step-info" x="20" y="35" font-family="Poppins" font-size="14" font-weight="600" fill="#333">
                         Passo 1: Átomos iniciais
                     </text>
@@ -263,9 +263,11 @@ class AnimationController {
             this.executeCurrentStep();
             this.updateInfo();
         } else {
+            this.reset();
+            this.play();
             // Animação completa
-            this.isPlaying = false;
-            this.updatePlayButton();
+            // this.isPlaying = false;
+            // this.updatePlayButton();
         }
     }
 
