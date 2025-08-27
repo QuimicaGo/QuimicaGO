@@ -1,7 +1,7 @@
 // Sistema de Exercícios - QuímicaGame
 class ExerciseController {
     constructor(gameInstance) {
-        this.game = gameInstance;
+        this.game = gameInstance; 
         this.currentDifficulty = 'easy';
         this.currentQuestionIndex = 0;
         this.currentQuestions = [];
@@ -27,18 +27,10 @@ class ExerciseController {
     }
 
     setupEventListeners() {
-        // Botão de confirmar resposta
-        document.getElementById('submit-answer')?.addEventListener('click', () => {
-            this.submitAnswer();
-        });
-
-        // Botão de próxima questão
-        document.getElementById('next-question')?.addEventListener('click', () => {
-            this.nextQuestion();
-        });
-
-        // Seleção de resposta
-        document.addEventListener('click', (e) => {
+        // O controller agora gerencia seus próprios cliques
+        document.getElementById('submit-answer')?.addEventListener('click', () => this.submitAnswer());
+        document.getElementById('next-question')?.addEventListener('click', () => this.nextQuestion());
+        document.getElementById('answer-options')?.addEventListener('click', (e) => {
             if (e.target.classList.contains('answer-option')) {
                 this.selectAnswer(e.target);
             }
@@ -314,12 +306,93 @@ class ExerciseController {
         this.currentScore = 0;
         this.userAnswers = [];
     }
+getOriginalExerciseHTML() {
+    return `
+        <h2>Exercícios Gamificados</h2>
 
+        <div class="difficulty-selector">
+            <h3>Escolha o Nível de Dificuldade:</h3>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn easy active" data-level="easy">
+                    <i class="fas fa-seedling"></i>
+                    <span>Fácil</span>
+                    <small>Conceitos básicos</small>
+                </button>
+                <button class="difficulty-btn medium" data-level="medium">
+                    <i class="fas fa-fire"></i>
+                    <span>Médio</span>
+                    <small>Aplicação de regras</small>
+                </button>
+                <button class="difficulty-btn hard" data-level="hard">
+                    <i class="fas fa-crown"></i>
+                    <span>Difícil</span>
+                    <small>Análise complexa</small>
+                </button>
+            </div>
+        </div>
+
+        <div class="exercise-container">
+            <div class="exercise-header">
+                <div class="exercise-progress">
+                    <span>Questão <span id="current-question">1</span> de <span
+                            id="total-questions">5</span></span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="exercise-progress"></div>
+                    </div>
+                </div>
+                <div class="exercise-score">
+                    <i class="fas fa-star"></i>
+                    <span id="current-score">0</span> pontos
+                </div>
+            </div>
+
+            <div class="question-container">
+                <div class="question">
+                    <h3 id="question-text">Carregando questão...</h3>
+                    <div class="question-image" id="question-image" style="display: none;">
+                        </div>
+                </div>
+
+                <div class="answers">
+                    <div class="answer-options" id="answer-options">
+                        </div>
+                </div>
+
+                <div class="question-actions">
+                    <button id="submit-answer" class="btn btn-primary" disabled>
+                        Confirmar Resposta
+                    </button>
+                    <button id="next-question" class="btn btn-secondary" style="display: none;">
+                        Próxima Questão
+                    </button>
+                </div>
+            </div>
+
+            <div class="feedback-container" id="feedback-container" style="display: none;">
+                <div class="feedback-content">
+                    <div class="feedback-icon">
+                        <i id="feedback-icon"></i>
+                    </div>
+                    <h4 id="feedback-title"></h4>
+                    <p id="feedback-text"></p>
+                </div>
+            </div>
+        </div>
+    `;
+}
     startExercises() {
+        // Reseta o container caso o usuário esteja jogando de novo
+        document.querySelector('#exercises .container').innerHTML = this.getOriginalExerciseHTML();
+        
+        this.currentQuestionIndex = 0;
+        this.currentScore = 0;
+        this.userAnswers = [];
         this.generateQuestionSet();
         this.startTime = Date.now();
         this.showQuestion();
         this.updateExerciseHeader();
+        // Garante que os listeners sejam reatribuídos após o reset do HTML
+        this.setupEventListeners();
     }
 
     generateQuestionSet() {
@@ -338,19 +411,15 @@ class ExerciseController {
         });
     }
 
-    showQuestion() {
+   showQuestion() {
         if (this.currentQuestionIndex >= this.currentQuestions.length) {
             this.finishExercises();
             return;
         }
-
         const question = this.currentQuestions[this.currentQuestionIndex];
         this.questionStartTime = Date.now();
         
-        // Atualizar texto da questão
         document.getElementById('question-text').textContent = question.question;
-        
-        // Limpar e criar opções de resposta
         const optionsContainer = document.getElementById('answer-options');
         optionsContainer.innerHTML = '';
         
@@ -362,25 +431,16 @@ class ExerciseController {
             optionsContainer.appendChild(optionElement);
         });
         
-        // Resetar botões
+        document.getElementById('submit-answer').style.display = 'inline-flex';
         document.getElementById('submit-answer').disabled = true;
         document.getElementById('next-question').style.display = 'none';
         document.getElementById('feedback-container').style.display = 'none';
-        
-        // Atualizar contador
         this.updateExerciseHeader();
     }
 
     selectAnswer(optionElement) {
-        // Remover seleção anterior
-        document.querySelectorAll('.answer-option').forEach(option => {
-            option.classList.remove('selected');
-        });
-        
-        // Selecionar nova opção
+        document.querySelectorAll('.answer-option').forEach(option => option.classList.remove('selected'));
         optionElement.classList.add('selected');
-        
-        // Habilitar botão de confirmar
         document.getElementById('submit-answer').disabled = false;
     }
 
@@ -392,41 +452,35 @@ class ExerciseController {
         const question = this.currentQuestions[this.currentQuestionIndex];
         const isCorrect = selectedIndex === question.shuffledCorrect;
         const timeSpent = Date.now() - this.questionStartTime;
+
+        // A LÓGICA DOS SONS ESTÁ AQUI
+        if (isCorrect) {
+            this.game.soundCorrectAnswer.play();
+        } else {
+            this.game.soundIncorrectAnswer.play();
+        }
         
-        // Registrar resposta
         this.userAnswers.push({
-            questionId: question.id,
-            selectedIndex,
-            isCorrect,
-            timeSpent,
-            topic: question.topic
+            questionId: question.id, selectedIndex, isCorrect, timeSpent, topic: question.topic
         });
         
-        // Atualizar pontuação
         if (isCorrect) {
             const points = this.calculateQuestionPoints(timeSpent);
             this.currentScore += points;
         }
         
-        // Mostrar feedback
         this.showFeedback(isCorrect, question);
-        
-        // Marcar opções
         this.markAnswers(selectedIndex, question.shuffledCorrect);
         
-        // Desabilitar seleção
         document.querySelectorAll('.answer-option').forEach(option => {
             option.style.pointerEvents = 'none';
         });
         
-        // Atualizar botões
         document.getElementById('submit-answer').style.display = 'none';
         document.getElementById('next-question').style.display = 'inline-flex';
         
-        // Registrar no sistema de gamificação
-        this.recordAnswer(isCorrect, question.topic, timeSpent);
-        
-        // Atualizar UI
+        // Usa o método do cérebro para registrar a resposta no progresso geral
+        this.game.recordAnswer(isCorrect); 
         this.updateExerciseHeader();
     }
 
