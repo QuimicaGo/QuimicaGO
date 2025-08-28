@@ -361,7 +361,7 @@ class QuimicaGame {
 
     initializeExercises() {
         console.log('QuimicaGame: Inicializando exercícios');
-        if (window.ExerciseController && !window.exerciseController) {
+        if (window.ExerciseController ) {
             try {
                 window.exerciseController = new window.ExerciseController(this);
                 console.log('QuimicaGame: ExerciseController criado');
@@ -369,6 +369,66 @@ class QuimicaGame {
                 console.error('QuimicaGame: Erro ao criar ExerciseController:', error);
             }
         }
+    }
+
+    resetExercises(){
+        console.log('Quimica Game: Reiniciando exercícios');
+        const exerciseContainer = document.querySelector('.exercise-container');
+        if (!exerciseContainer) {
+            console.error('Quimica Game: Erro ao resetar container de exercícios, não foi encontrado.');
+            return;
+        }
+
+        let originalExerciseHTML; //Isso aqui ta simplesmente pegando toda essa parte do index html. Talvez seja interesse no futuro refatorar, ja que se mudar la nao vai mudar aqui automaticamente e vice versa.
+        originalExerciseHTML = `  
+        <div class="exercise-header">
+            <div class="exercise-progress">
+                <span>Questão <span id="current-question">1</span> de <span id="total-questions">5</span></span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="exercise-progress"></div>
+                </div>
+            </div>
+            <div class="exercise-score">
+                <i class="fas fa-star"></i>
+                <span id="current-score">0</span> pontos
+            </div>
+        </div>
+
+        <div class="question-container">
+            <div class="question">
+                <h3 id="question-text">Escolha uma dificuldade para começar.</h3>
+                <div class="question-image" id="question-image" style="display: none;">
+                    </div>
+            </div>
+
+            <div class="answers">
+                <div class="answer-options" id="answer-options">
+                    </div>
+            </div>
+
+            <div class="question-actions">
+                <button id="submit-answer" class="btn btn-primary" disabled>
+                    Confirmar Resposta
+                </button>
+                <button id="next-question" class="btn btn-secondary" style="display: none;">
+                    Próxima Questão
+                </button>
+            </div>
+        </div>
+
+        <div class="feedback-container" id="feedback-container" style="display: none;">
+            <div class="feedback-content">
+                <div class="feedback-icon">
+                    <i id="feedback-icon"></i>
+                </div>
+                <h4 id="feedback-title"></h4>
+                <p id="feedback-text"></p>
+            </div>
+        </div>
+    `;
+
+        exerciseContainer.innerHTML = originalExerciseHTML;
+        this.initializeExercises();
     }
 
     // Métodos de exercícios simplificados para teste

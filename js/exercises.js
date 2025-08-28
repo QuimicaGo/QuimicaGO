@@ -363,6 +363,7 @@ class ExerciseController {
         });
         
         // Resetar botões
+        document.getElementById('submit-answer').style.display = 'inline-flex';
         document.getElementById('submit-answer').disabled = true;
         document.getElementById('next-question').style.display = 'none';
         document.getElementById('feedback-container').style.display = 'none';
@@ -567,7 +568,7 @@ class ExerciseController {
                 </div>
                 
                 <div class="results-actions">
-                    <button class="btn btn-primary" onclick="window.quimicaGame.showSection('exercises')">
+                    <button class="btn btn-primary" onclick="window.quimicaGame.resetExercises()"
                         <i class="fas fa-redo"></i>
                         Tentar Novamente
                     </button>
@@ -586,6 +587,7 @@ class ExerciseController {
         // Adicionar estilos para os resultados
         this.addResultsStyles();
     }
+    
 
     generateRecommendations(accuracy) {
         let recommendations = '<div class="recommendations"><h4>Recomendações:</h4><ul>';
