@@ -148,13 +148,35 @@ class QuimicaGame {
 
 
     showSection(sectionName) {
-        // Se a seção clicada já for a ativa, não faz nada
-        if (this.currentSection === sectionName) {
-            return;
+        console.log(`QuimicaGame: Mostrando seção ${sectionName}`);
+
+        // Esconder todas as seções
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Mostrar a seção selecionada
+        const targetSection = document.getElementById(sectionName);
+        if (targetSection) {
+            targetSection.classList.add('active');
+            this.currentSection = sectionName;
+            console.log(`QuimicaGame: Seção ${sectionName} ativada`);
+        } else {
+            console.error(`QuimicaGame: Seção ${sectionName} não encontrada`);
         }
 
-        console.log(`QuimicaGame: Transicionando para a seção ${sectionName}`);
-        this.transitionToSection(sectionName);
+        // Atualizar navegação ativa
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${sectionName}`) {
+                link.classList.add('active');
+            }
+        });
+
+        // Executar ações específicas da seção
+        this.onSectionChange(sectionName);
     }
 
     onSectionChange(sectionName) {
@@ -505,6 +527,60 @@ class QuimicaGame {
         }
     }
 
+    submitAnswer() {
+        console.log('QuimicaGame: Submetendo resposta');
+
+        const selectedOption = document.querySelector('.answer-option.selected');
+        if (!selectedOption) {
+            console.warn('QuimicaGame: Nenhuma resposta selecionada');
+            return;
+        }
+
+        // Simular feedback básico
+        const feedbackContainer = document.getElementById('feedback-container');
+        if (feedbackContainer) {
+            feedbackContainer.style.display = 'block';
+            feedbackContainer.innerHTML = `
+                <div class="feedback-content">
+                    <div class="feedback-icon correct">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h4>Resposta registrada!</h4>
+                    <p>Sistema de exercícios em desenvolvimento.</p>
+                </div>
+            `;
+        }
+
+        // Mostrar botão de próxima questão
+        const nextBtn = document.getElementById('next-question');
+        const submitBtn = document.getElementById('submit-answer');
+
+        if (nextBtn) nextBtn.style.display = 'inline-flex';
+        if (submitBtn) submitBtn.style.display = 'none';
+    }
+
+    nextQuestion() {
+        console.log('QuimicaGame: Próxima questão');
+
+        // Resetar interface
+        const feedbackContainer = document.getElementById('feedback-container');
+        const nextBtn = document.getElementById('next-question');
+        const submitBtn = document.getElementById('submit-answer');
+
+        if (feedbackContainer) feedbackContainer.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+        if (submitBtn) {
+            submitBtn.style.display = 'inline-flex';
+            submitBtn.disabled = true;
+        }
+
+        // Limpar seleções
+        const options = document.querySelectorAll('.answer-option');
+        options.forEach(option => {
+            option.classList.remove('selected', 'correct', 'incorrect');
+        });
+    }
+
     updateProgressSection() {
         console.log('QuimicaGame: Atualizando seção de progresso');
 
@@ -589,8 +665,8 @@ class QuimicaGame {
             if (topic && this.userProgress.topicProgress[topic] !== undefined) {
                 const progress = this.userProgress.topicProgress[topic];
                 const max = maxExercises[topic];
-                const percentage = this.getTopicProgressPercentage(topic);
-                
+                const percentage = (progress / max) * 100;
+
                 const progressBar = card.querySelector('.progress-fill');
                 const progressText = card.querySelector('span');
 
