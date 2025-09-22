@@ -3,9 +3,17 @@ class QuimicaGame {
     constructor() {
         this.currentSection = 'home';
         this.soundTransitionOut = new Audio('assets/swoosh.mp3');
+        this.soundTransitionOut.volume = 0.2;
+
         this.soundTransitionIn = new Audio('assets/woosh.mp3');
+        this.soundTransitionIn.volume = 0.2;
+
         this.soundCorrectAnswer = new Audio('assets/correct.mp3');
+        this.soundCorrectAnswer.volume = 0.2;
+
         this.soundIncorrectAnswer = new Audio('assets/wrong.mp3');
+        this.soundIncorrectAnswer.volume = 0.2;
+
         this.userProgress = {
             points: 0,
             level: 1,
@@ -108,7 +116,7 @@ class QuimicaGame {
             });
         });
 
-       }
+    }
 
     setupAnimationControls() {
         const playBtn = document.getElementById('play-btn');
@@ -255,8 +263,7 @@ class QuimicaGame {
                 onComplete: () => {
                     gsap.set(transitionOverlay, { visibility: 'hidden' });
                 }
-            }, "-=0.2")
-            .call(() => this.soundTransitionIn.play())
+            }, "-=0.2").call(() => this.soundTransitionIn.play())
 
             // opacidade da seção INTEIRA
             .to(newSection, {
