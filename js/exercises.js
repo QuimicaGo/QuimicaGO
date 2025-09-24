@@ -1,8 +1,13 @@
 // Sistema de Exercícios - QuímicaGame
 class ExerciseController {
     constructor(gameInstance) {
+        this.soundCorrectAnswer = new Audio('assets/correct.mp3');
+        this.soundCorrectAnswer.volume = 0.5;
+
+        this.soundIncorrectAnswer = new Audio('assets/wrong.mp3');
+        this.soundIncorrectAnswer.volume = 0.5;
         this.game = gameInstance;
-        this.currentDifficulty = 'easy';
+        this.currentDifficulty = null;
         this.currentQuestionIndex = 0;
         this.currentQuestions = [];
         this.userAnswers = [];
@@ -454,11 +459,13 @@ class ExerciseController {
             feedbackIcon.parentElement.className = 'feedback-icon correct';
             feedbackTitle.textContent = 'Correto!';
             feedbackText.textContent = question.explanation;
+            this.soundCorrectAnswer.play();
         } else {
             feedbackIcon.className = 'fas fa-times-circle';
             feedbackIcon.parentElement.className = 'feedback-icon incorrect';
             feedbackTitle.textContent = 'Incorreto';
             feedbackText.textContent = `${question.explanation} Dica: ${question.hint}`;
+             this.soundIncorrectAnswer.play();
         }
         
         feedbackContainer.style.display = 'block';
