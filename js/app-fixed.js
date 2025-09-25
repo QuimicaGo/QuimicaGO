@@ -7,13 +7,6 @@ class QuimicaGame {
 
         this.soundTransitionIn = new Audio('assets/woosh.mp3');
         this.soundTransitionIn.volume = 0.2;
-
-        this.soundCorrectAnswer = new Audio('assets/correct.mp3');
-        this.soundCorrectAnswer.volume = 0.2;
-
-        this.soundIncorrectAnswer = new Audio('assets/wrong.mp3');
-        this.soundIncorrectAnswer.volume = 0.2;
-
         this.userProgress = {
             points: 0,
             level: 1,
@@ -109,13 +102,17 @@ class QuimicaGame {
         console.log(`QuimicaGame: Encontrados ${difficultyBtns.length} botões de dificuldade`);
 
         difficultyBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', () => {
                 const level = btn.dataset.level;
-                console.log(`QuimicaGame: Dificuldade selecionada - ${level}`);
-                this.selectDifficulty(level);
+                if (level) {
+                    console.log(`QuimicaGame: Dificuldade selecionada - ${level}`);
+                    this.selectDifficulty(level);
+                }
             });
         });
 
+        // Exercícios
+        this.setupExerciseEvents();
     }
 
     setupAnimationControls() {
@@ -153,34 +150,33 @@ class QuimicaGame {
         }
     }
 
-
-
-    showSection(sectionName) {
-        // Se a seção clicada já for a ativa, não faz nada
-        if (this.currentSection === sectionName) {
-            return;
+    setupExerciseEvents() {
+        // Botão de confirmar resposta
+        const submitBtn = document.getElementById('submit-answer');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', () => {
+                console.log('QuimicaGame: Submit answer clicado');
+                this.submitAnswer();
+            });
         }
 
-        console.log(`QuimicaGame: Transicionando para a seção ${sectionName}`);
-        this.transitionToSection(sectionName);
-    }
-
-    onSectionChange(sectionName) {
-        console.log(`QuimicaGame: Mudança para seção ${sectionName}`);
-
-        switch (sectionName) {
-            case 'animation':
-                this.initializeAnimations();
-                break;
-            case 'exercises':
-                this.initializeExercises();
-                break;
-            case 'progress':
-                this.updateProgressSection();
-                break;
+        // Botão de próxima questão
+        const nextBtn = document.getElementById('next-question');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                console.log('QuimicaGame: Next question clicado');
+                this.nextQuestion();
+            });
         }
+
+        // Seleção de resposta (delegação de eventos)
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('answer-option')) {
+                console.log('QuimicaGame: Resposta selecionada');
+                this.selectAnswer(e.target);
+            }
+        });
     }
-    // Em js/app-fixed.js na classe QuimicaGame
 
     transitionToSection(sectionName) {
         const oldSection = document.getElementById(this.currentSection);
@@ -278,6 +274,54 @@ class QuimicaGame {
                 stagger: 0.07,
                 ease: "power2.out"
             }, "<"); // O "<" garante que a animação dos filhos comece JUNTO com a do pai
+    }
+
+    showSection(sectionName) {
+        console.log(`QuimicaGame: Mostrando seção ${sectionName}`);
+
+        // Esconder todas as seções
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+            section.classList.remove('active');
+        });
+        this.transitionToSection(sectionName);
+        // Mostrar a seção selecionada
+        const targetSection = document.getElementById(sectionName);
+        if (targetSection) {
+            targetSection.classList.add('active');
+            this.currentSection = sectionName;
+            console.log(`QuimicaGame: Seção ${sectionName} ativada`);
+        } else {
+            console.error(`QuimicaGame: Seção ${sectionName} não encontrada`);
+        }
+
+        // Atualizar navegação ativa
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${sectionName}`) {
+                link.classList.add('active');
+            }
+        });
+
+        // Executar ações específicas da seção
+        this.onSectionChange(sectionName);
+    }
+
+    onSectionChange(sectionName) {
+        console.log(`QuimicaGame: Mudança para seção ${sectionName}`);
+
+        switch (sectionName) {
+            case 'animation':
+                this.initializeAnimations();
+                break;
+            case 'exercises':
+                this.initializeExercises();
+                break;
+            case 'progress':
+                this.updateProgressSection();
+                break;
+        }
     }
 
     switchAnimationTab(animationType) {
@@ -397,33 +441,97 @@ class QuimicaGame {
         }
     }
 
+    // Dentro da classe QuimicaGame
+
     selectDifficulty(level) {
-        console.log(`QuimicaGame: Selecionando dificuldade ${level}`);
+        console.log(`QuimicaGame: Dificuldade selecionada - ${level}`);
 
-        // Atualizar botões de dificuldade
-        const difficultyBtns = document.querySelectorAll('.difficulty-btn');
-        difficultyBtns.forEach(btn => {
-            btn.classList.remove('active');
-        });
-
+        document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
         const activeBtn = document.querySelector(`[data-level="${level}"]`);
-        if (activeBtn) {
-            activeBtn.classList.add('active');
-        }
+        if (activeBtn) activeBtn.classList.add('active');
 
-        // Inicializar exercícios com a dificuldade selecionada
+        // MODIFICADO: Chama a função para mostrar o SELETOR DE QUANTIDADE
         if (window.exerciseController) {
-            window.exerciseController.setDifficulty(level);
-            window.exerciseController.startExercises();
+            window.exerciseController.showQuantitySelector(level);
         } else {
             console.warn('QuimicaGame: ExerciseController não disponível');
         }
     }
 
+    resetExercises() {
+        console.log('Quimica Game: Reiniciando exercícios');
+
+        // ESTA PARTE GARANTE QUE A TELA VOLTE AO ESTADO INICIAL CORRETO
+        const difficultyButtonsContainer = document.querySelector('.difficulty-buttons');
+        const quantitySelector = document.getElementById('quantity-selector');
+        const difficultySelectorTitle = document.querySelector('.difficulty-selector > h3');
+        const exerciseContainer = document.querySelector('.exercise-container');
+
+        if (difficultyButtonsContainer) difficultyButtonsContainer.classList.remove('hidden');
+        if (quantitySelector) quantitySelector.classList.add('hidden');
+        if (difficultySelectorTitle) difficultySelectorTitle.classList.remove('hidden');
+        if (exerciseContainer) exerciseContainer.classList.add('hidden');
+
+        document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+
+        // Esta parte do seu código, que recria o HTML das questões, continua igual
+        originalExerciseHTML = `  
+        <div class="exercise-header">
+            <div class="exercise-progress">
+                <span>Questão <span id="current-question">1</span> de <span id="total-questions">5</span></span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="exercise-progress"></div>
+                </div>
+            </div>
+            <div class="exercise-score">
+                <i class="fas fa-star"></i>
+                <span id="current-score">0</span> pontos
+            </div>
+        </div>
+
+        <div class="question-container">
+            <div class="question">
+                <h3 id="question-text">Escolha uma dificuldade para começar.</h3>
+                <div class="question-image" id="question-image" style="display: none;">
+                    </div>
+            </div>
+
+            <div class="answers">
+                <div class="answer-options" id="answer-options">
+                    </div>
+            </div>
+
+            <div class="question-actions">
+                <button id="submit-answer" class="btn btn-primary" style="display: none;" disabled>
+                    Confirmar Resposta
+                </button>
+                <button id="next-question" class="btn btn-secondary" style="display: none;">
+                    Próxima Questão
+                </button>
+            </div>
+        </div>
+
+        <div class="feedback-container" id="feedback-container" style="display: none;">
+            <div class="feedback-content">
+                <div class="feedback-icon">
+                    <i id="feedback-icon"></i>
+                </div>
+                <h4 id="feedback-title"></h4>
+                <p id="feedback-text"></p>
+            </div>
+        </div>
+    `; // MANTENHA SEU BLOCO HTML ORIGINAL AQUI
+        exerciseContainer.innerHTML = originalExerciseHTML;
+        this.initializeExercises();
+    }
     initializeExercises() {
         console.log('QuimicaGame: Inicializando exercícios');
-        if (window.ExerciseController && !window.exerciseController) {
+        if (window.ExerciseController) {
             try {
+                const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+                difficultyBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                });
                 window.exerciseController = new window.ExerciseController(this);
                 console.log('QuimicaGame: ExerciseController criado');
             } catch (error) {
@@ -431,6 +539,8 @@ class QuimicaGame {
             }
         }
     }
+
+
 
     // Métodos de exercícios simplificados para teste
     selectAnswer(optionElement) {
@@ -450,6 +560,60 @@ class QuimicaGame {
         if (submitBtn) {
             submitBtn.disabled = false;
         }
+    }
+
+    submitAnswer() {
+        console.log('QuimicaGame: Submetendo resposta');
+
+        const selectedOption = document.querySelector('.answer-option.selected');
+        if (!selectedOption) {
+            console.warn('QuimicaGame: Nenhuma resposta selecionada');
+            return;
+        }
+
+        // Simular feedback básico
+        const feedbackContainer = document.getElementById('feedback-container');
+        if (feedbackContainer) {
+            feedbackContainer.style.display = 'block';
+            feedbackContainer.innerHTML = `
+                <div class="feedback-content">
+                    <div class="feedback-icon correct">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h4>Resposta registrada!</h4>
+                    <p>Sistema de exercícios em desenvolvimento.</p>
+                </div>
+            `;
+        }
+
+        // Mostrar botão de próxima questão
+        const nextBtn = document.getElementById('next-question');
+        const submitBtn = document.getElementById('submit-answer');
+
+        if (nextBtn) nextBtn.style.display = 'inline-flex';
+        if (submitBtn) submitBtn.style.display = 'none';
+    }
+
+    nextQuestion() {
+        console.log('QuimicaGame: Próxima questão');
+
+        // Resetar interface
+        const feedbackContainer = document.getElementById('feedback-container');
+        const nextBtn = document.getElementById('next-question');
+        const submitBtn = document.getElementById('submit-answer');
+
+        if (feedbackContainer) feedbackContainer.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+        if (submitBtn) {
+            submitBtn.style.display = 'inline-flex';
+            submitBtn.disabled = true;
+        }
+
+        // Limpar seleções
+        const options = document.querySelectorAll('.answer-option');
+        options.forEach(option => {
+            option.classList.remove('selected', 'correct', 'incorrect');
+        });
     }
 
     updateProgressSection() {
@@ -482,6 +646,15 @@ class QuimicaGame {
         this.updateTopicProgress();
     }
 
+    getTopicProgressPercentage(topic) {
+        const maxExercises = { ionic: 10, covalent: 10, metallic: 5 };
+        const progress = this.userProgress.topicProgress[topic] || 0;
+        const max = maxExercises[topic] || 1;
+        const percentage = (progress / max) * 100;
+
+        return Math.max(0, Math.min(percentage, 100));
+    }
+
     updateTopicProgress() {
         const topics = ['ionic', 'covalent', 'metallic'];
         const maxExercises = { ionic: 10, covalent: 10, metallic: 5 };
@@ -489,7 +662,7 @@ class QuimicaGame {
         topics.forEach(topic => {
             const progress = this.userProgress.topicProgress[topic];
             const max = maxExercises[topic];
-            const percentage = (progress / max) * 100;
+            const percentage = this.getTopicProgressPercentage(topic);
 
             const progressBar = document.getElementById(`${topic}-progress`);
             if (progressBar) {
@@ -527,13 +700,13 @@ class QuimicaGame {
             if (topic && this.userProgress.topicProgress[topic] !== undefined) {
                 const progress = this.userProgress.topicProgress[topic];
                 const max = maxExercises[topic];
-                const percentage = (progress / max) * 100;
+                const percentage = this.getTopicProgressPercentage(topic);
 
                 const progressBar = card.querySelector('.progress-fill');
                 const progressText = card.querySelector('span');
 
                 if (progressBar) progressBar.style.width = `${percentage}%`;
-                if (progressText) progressText.textContent = `${percentage.toFixed(0)}% completo`;
+                if (progressText) progressText.textContent = `${Math.round(percentage)}% completo`;
             }
         });
     }
@@ -622,4 +795,3 @@ window.addEventListener('load', () => {
         initializeQuimicaGame();
     }
 });
-
