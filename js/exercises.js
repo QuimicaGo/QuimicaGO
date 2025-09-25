@@ -313,6 +313,7 @@ class ExerciseController {
         const count = questionsForLevel.length;
 
         const difficultyButtonsContainer = document.querySelector('.difficulty-buttons');
+        const difficultyButtonsHeader = document.querySelector('#difficulty-buttons-header');
         const quantitySelector = document.getElementById('quantity-selector');
         const exerciseContainer = document.querySelector('.exercise-container');
 
@@ -323,6 +324,7 @@ class ExerciseController {
             onComplete: () => {
                 difficultyButtonsContainer.classList.add('hidden');
                 exerciseContainer.classList.add('hidden');
+                difficultyButtonsHeader.classList.add('hidden');
 
                 // --- Lógica para atualizar os botões de quantidade ---
                 const quantityButtons = quantitySelector.querySelectorAll('.quantity-btn');
@@ -348,6 +350,13 @@ class ExerciseController {
                         btn.setAttribute('data-actual-quantity', count);
                         maxReached = true;
                     }
+                });
+
+                const backToDifficultyButton = document.getElementById('back-to-difficulty-btn');
+                backToDifficultyButton.addEventListener('click', () => {
+                    difficultyButtonsContainer.classList.remove('hidden');
+                difficultyButtonsHeader.classList.remove('hidden');
+                quantitySelector.classList.add('hidden');
                 });
 
                 quantitySelector.classList.remove('hidden');
