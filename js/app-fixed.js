@@ -102,10 +102,12 @@ class QuimicaGame {
         console.log(`QuimicaGame: Encontrados ${difficultyBtns.length} botões de dificuldade`);
 
         difficultyBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', () => {
                 const level = btn.dataset.level;
-                console.log(`QuimicaGame: Dificuldade selecionada - ${level}`);
-                this.selectDifficulty(level);
+                if (level) {
+                    console.log(`QuimicaGame: Dificuldade selecionada - ${level}`);
+                    this.selectDifficulty(level);
+                }
             });
         });
 
@@ -439,54 +441,40 @@ class QuimicaGame {
         }
     }
 
+    // Dentro da classe QuimicaGame
+
     selectDifficulty(level) {
-        console.log(`QuimicaGame: Selecionando dificuldade ${level}`);
+        console.log(`QuimicaGame: Dificuldade selecionada - ${level}`);
 
-        // Atualizar botões de dificuldade
-        const difficultyBtns = document.querySelectorAll('.difficulty-btn');
-        difficultyBtns.forEach(btn => {
-            btn.classList.remove('active');
-        });
-
+        document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
         const activeBtn = document.querySelector(`[data-level="${level}"]`);
-        if (activeBtn) {
-            activeBtn.classList.add('active');
-        }
+        if (activeBtn) activeBtn.classList.add('active');
 
-        // Inicializar exercícios com a dificuldade selecionada
+        // MODIFICADO: Chama a função para mostrar o SELETOR DE QUANTIDADE
         if (window.exerciseController) {
-            window.exerciseController.setDifficulty(level);
-            window.exerciseController.startExercises();
+            window.exerciseController.showQuantitySelector(level);
         } else {
             console.warn('QuimicaGame: ExerciseController não disponível');
         }
     }
 
-    initializeExercises() {
-        console.log('QuimicaGame: Inicializando exercícios');
-        if (window.ExerciseController) {
-            try {
-                const difficultyBtns = document.querySelectorAll('.difficulty-btn');
-                difficultyBtns.forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                window.exerciseController = new window.ExerciseController(this);
-                console.log('QuimicaGame: ExerciseController criado');
-            } catch (error) {
-                console.error('QuimicaGame: Erro ao criar ExerciseController:', error);
-            }
-        }
-    }
-
     resetExercises() {
         console.log('Quimica Game: Reiniciando exercícios');
-        const exerciseContainer = document.querySelector('.exercise-container');
-        if (!exerciseContainer) {
-            console.error('Quimica Game: Erro ao resetar container de exercícios, não foi encontrado.');
-            return;
-        }
 
-        let originalExerciseHTML; //Isso aqui ta simplesmente pegando toda essa parte do index html. Talvez seja interesse no futuro refatorar, ja que se mudar la nao vai mudar aqui automaticamente e vice versa.
+        // ESTA PARTE GARANTE QUE A TELA VOLTE AO ESTADO INICIAL CORRETO
+        const difficultyButtonsContainer = document.querySelector('.difficulty-buttons');
+        const quantitySelector = document.getElementById('quantity-selector');
+        const difficultySelectorTitle = document.querySelector('.difficulty-selector > h3');
+        const exerciseContainer = document.querySelector('.exercise-container');
+
+        if (difficultyButtonsContainer) difficultyButtonsContainer.classList.remove('hidden');
+        if (quantitySelector) quantitySelector.classList.add('hidden');
+        if (difficultySelectorTitle) difficultySelectorTitle.classList.remove('hidden');
+        if (exerciseContainer) exerciseContainer.classList.add('hidden');
+
+        document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+
+        // Esta parte do seu código, que recria o HTML das questões, continua igual
         originalExerciseHTML = `  
         <div class="exercise-header">
             <div class="exercise-progress">
@@ -532,11 +520,27 @@ class QuimicaGame {
                 <p id="feedback-text"></p>
             </div>
         </div>
-    `;
-
+    `; // MANTENHA SEU BLOCO HTML ORIGINAL AQUI
         exerciseContainer.innerHTML = originalExerciseHTML;
         this.initializeExercises();
     }
+    initializeExercises() {
+        console.log('QuimicaGame: Inicializando exercícios');
+        if (window.ExerciseController) {
+            try {
+                const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+                difficultyBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                window.exerciseController = new window.ExerciseController(this);
+                console.log('QuimicaGame: ExerciseController criado');
+            } catch (error) {
+                console.error('QuimicaGame: Erro ao criar ExerciseController:', error);
+            }
+        }
+    }
+
+
 
     // Métodos de exercícios simplificados para teste
     selectAnswer(optionElement) {

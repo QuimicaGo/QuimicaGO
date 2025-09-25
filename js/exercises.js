@@ -8,14 +8,20 @@ class ExerciseController {
         this.soundIncorrectAnswer.volume = 0.5;
         this.game = gameInstance;
         this.currentDifficulty = null;
+        this.soundCorrectAnswer = new Audio('assets/correct.mp3');
+        this.soundCorrectAnswer.volume = 0.5;
+
+        this.soundIncorrectAnswer = new Audio('assets/wrong.mp3');
+        this.soundIncorrectAnswer.volume = 0.5;
+        this.game = gameInstance;
+        this.currentDifficulty = null;
         this.currentQuestionIndex = 0;
         this.currentQuestions = [];
         this.userAnswers = [];
         this.startTime = null;
         this.questionStartTime = null;
-        this.totalQuestions = 5;
         this.currentScore = 0;
-        
+        this.totalQuestions = 0;
         this.questionBank = this.initializeQuestionBank();
         this.init();
     }
@@ -29,25 +35,6 @@ class ExerciseController {
         if (window.GamificationSystem && !this.gamification) {
             this.gamification = new window.GamificationSystem(this.game);
         }
-    }
-
-    setupEventListeners() {
-        // Botão de confirmar resposta
-        document.getElementById('submit-answer')?.addEventListener('click', () => {
-            this.submitAnswer();
-        });
-
-        // Botão de próxima questão
-        document.getElementById('next-question')?.addEventListener('click', () => {
-            this.nextQuestion();
-        });
-
-        // Seleção de resposta
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('answer-option')) {
-                this.selectAnswer(e.target);
-            }
-        });
     }
 
     initializeQuestionBank() {
@@ -319,21 +306,124 @@ class ExerciseController {
         this.currentScore = 0;
         this.userAnswers = [];
     }
+    showQuantitySelector(difficulty) {
+        this.currentDifficulty = difficulty; // Guarda a dificuldade para usar depois
 
-    startExercises() {
-        this.generateQuestionSet();
-        this.startTime = Date.now();
-        this.showQuestion();
-        this.updateExerciseHeader();
+        const questionsForLevel = this.questionBank[difficulty] || [];
+        const count = questionsForLevel.length;
+
+        const difficultyButtonsContainer = document.querySelector('.difficulty-buttons');
+        const quantitySelector = document.getElementById('quantity-selector');
+        const exerciseContainer = document.querySelector('.exercise-container');
+
+        // Anima a transição da tela de dificuldade para a de quantidade
+        gsap.to([difficultyButtonsContainer, exerciseContainer], {
+            opacity: 0,
+            duration: 0.3,
+            onComplete: () => {
+                difficultyButtonsContainer.classList.add('hidden');
+                exerciseContainer.classList.add('hidden');
+
+                // --- Lógica para atualizar os botões de quantidade ---
+                const quantityButtons = quantitySelector.querySelectorAll('.quantity-btn');
+                let maxReached = false;
+
+                quantityButtons.forEach(btn => {
+                    const targetQuantity = parseInt(btn.dataset.quantity);
+                    const textSpan = btn.querySelector('span');
+
+                    if (count === 0) { // Caso não haja nenhuma questão
+                        btn.disabled = true;
+                        maxReached = true;
+                    } else if (maxReached) {
+                        btn.disabled = true;
+                        textSpan.textContent = `${targetQuantity} Questões`;
+                    } else if (count >= targetQuantity) {
+                        btn.disabled = false;
+                        textSpan.textContent = `${targetQuantity} Questões`;
+                        btn.setAttribute('data-actual-quantity', targetQuantity);
+                    } else {
+                        btn.disabled = false;
+                        textSpan.textContent = `Máximo (${count})`;
+                        btn.setAttribute('data-actual-quantity', count);
+                        maxReached = true;
+                    }
+                });
+
+                quantitySelector.classList.remove('hidden');
+                gsap.fromTo(quantitySelector, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
+            }
+        });
+    }
+
+ startExercises(quantity) {
+        if (!quantity || quantity <= 0) {
+            console.error("Quantidade de questões inválida para iniciar.");
+            // Opcional: Voltar para a tela de seleção
+            window.quimicaGame.resetExercises();
+            return;
+        }
+        this.totalQuestions = quantity; // Define o total de questões para o quiz
+        
+        const quantitySelector = document.getElementById('quantity-selector');
+        const exerciseContainer = document.querySelector('.exercise-container');
+        const difficultySelectorTitle = document.querySelector('.difficulty-selector h3');
+
+        gsap.to([quantitySelector, difficultySelectorTitle], {
+            opacity: 0,
+            duration: 0.3,
+            onComplete: () => {
+                quantitySelector.classList.add('hidden');
+                difficultySelectorTitle.classList.add('hidden');
+
+                exerciseContainer.classList.remove('hidden');
+                gsap.fromTo(exerciseContainer, {opacity: 0}, {opacity: 1, duration: 0.4});
+                
+                this.generateQuestionSet(); // Agora usará a quantidade correta
+                this.startTime = Date.now();
+                this.showQuestion();
+                this.updateExerciseHeader();
+            }
+        });
+    }
+    
+    // ATUALIZE o método setupEventListeners
+ setupEventListeners() {
+        // Listener para o botão 'Confirmar Resposta'
+        document.getElementById('submit-answer')?.addEventListener('click', () => {
+            this.submitAnswer();
+        });
+
+        // Listener para o botão 'Próxima Questão'
+        document.getElementById('next-question')?.addEventListener('click', () => {
+            this.nextQuestion();
+        });
+
+        // Listener para os botões de QUANTIDADE (5, 10, 20)
+        // É este que inicia o quiz!
+        document.getElementById('quantity-selector')?.addEventListener('click', (e) => {
+            const quantityBtn = e.target.closest('.quantity-btn');
+            if (quantityBtn && !quantityBtn.disabled) {
+                const quantity = parseInt(quantityBtn.getAttribute('data-actual-quantity'));
+                this.startExercises(quantity);
+            }
+        });
+
+        // Listener para as OPÇÕES de resposta
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('answer-option')) {
+                this.selectAnswer(e.target);
+            }
+        });
     }
 
     generateQuestionSet() {
         const questions = this.questionBank[this.currentDifficulty];
-        
+
         // Embaralhar questões e selecionar um subconjunto
         const shuffled = [...questions].sort(() => Math.random() - 0.5);
         this.currentQuestions = shuffled.slice(0, this.totalQuestions);
-        
+
         // Embaralhar opções de cada questão
         this.currentQuestions.forEach(question => {
             const correctAnswer = question.options[question.correct];
@@ -354,14 +444,14 @@ class ExerciseController {
 
         const question = this.currentQuestions[this.currentQuestionIndex];
         this.questionStartTime = Date.now();
-        
+
         // Atualizar texto da questão
         document.getElementById('question-text').textContent = question.question;
-        
+
         // Limpar e criar opções de resposta
         const optionsContainer = document.getElementById('answer-options');
         optionsContainer.innerHTML = '';
-        
+
         question.shuffledOptions.forEach((option, index) => {
             const optionElement = document.createElement('div');
             optionElement.className = 'answer-option';
@@ -369,13 +459,13 @@ class ExerciseController {
             optionElement.textContent = option;
             optionsContainer.appendChild(optionElement);
         });
-        
+
         // Resetar botões
         document.getElementById('submit-answer').style.display = 'inline-flex';
         document.getElementById('submit-answer').disabled = true;
         document.getElementById('next-question').style.display = 'none';
         document.getElementById('feedback-container').style.display = 'none';
-        
+
         // Atualizar contador
         this.updateExerciseHeader();
     }
@@ -385,10 +475,10 @@ class ExerciseController {
         document.querySelectorAll('.answer-option').forEach(option => {
             option.classList.remove('selected');
         });
-        
+
         // Selecionar nova opção
         optionElement.classList.add('selected');
-        
+
         // Habilitar botão de confirmar
         document.getElementById('submit-answer').disabled = false;
     }
@@ -396,12 +486,12 @@ class ExerciseController {
     submitAnswer() {
         const selectedOption = document.querySelector('.answer-option.selected');
         if (!selectedOption) return;
-        
+
         const selectedIndex = parseInt(selectedOption.dataset.index);
         const question = this.currentQuestions[this.currentQuestionIndex];
         const isCorrect = selectedIndex === question.shuffledCorrect;
         const timeSpent = Date.now() - this.questionStartTime;
-        
+
         // Registrar resposta
         this.userAnswers.push({
             questionId: question.id,
@@ -410,38 +500,38 @@ class ExerciseController {
             timeSpent,
             topic: question.topic
         });
-        
+
         // Atualizar pontuação
         if (isCorrect) {
             const points = this.calculateQuestionPoints(timeSpent);
             this.currentScore += points;
         }
-        
+
         // Mostrar feedback
         this.showFeedback(isCorrect, question);
-        
+
         // Marcar opções
         this.markAnswers(selectedIndex, question.shuffledCorrect);
-        
+
         // Desabilitar seleção
         document.querySelectorAll('.answer-option').forEach(option => {
             option.style.pointerEvents = 'none';
         });
-        
+
         // Atualizar botões
         document.getElementById('submit-answer').style.display = 'none';
         document.getElementById('next-question').style.display = 'inline-flex';
-        
+
         // Registrar no sistema de gamificação
         this.recordAnswer(isCorrect, question.topic, timeSpent);
-        
+
         // Atualizar UI
         this.updateExerciseHeader();
     }
 
     markAnswers(selectedIndex, correctIndex) {
         const options = document.querySelectorAll('.answer-option');
-        
+
         options.forEach((option, index) => {
             if (index === correctIndex) {
                 option.classList.add('correct');
@@ -456,7 +546,7 @@ class ExerciseController {
         const feedbackIcon = document.getElementById('feedback-icon');
         const feedbackTitle = document.getElementById('feedback-title');
         const feedbackText = document.getElementById('feedback-text');
-        
+
         if (isCorrect) {
             feedbackIcon.className = 'fas fa-check-circle';
             feedbackIcon.parentElement.className = 'feedback-icon correct';
@@ -468,20 +558,20 @@ class ExerciseController {
             feedbackIcon.parentElement.className = 'feedback-icon incorrect';
             feedbackTitle.textContent = 'Incorreto';
             feedbackText.textContent = `${question.explanation} Dica: ${question.hint}`;
-             this.soundIncorrectAnswer.play();
+            this.soundIncorrectAnswer.play();
         }
-        
+
         feedbackContainer.style.display = 'block';
     }
 
     nextQuestion() {
         this.currentQuestionIndex++;
-        
+
         // Reabilitar seleção
         document.querySelectorAll('.answer-option').forEach(option => {
             option.style.pointerEvents = 'auto';
         });
-        
+
         this.showQuestion();
     }
 
@@ -489,28 +579,28 @@ class ExerciseController {
         const totalTime = Date.now() - this.startTime;
         const correctAnswers = this.userAnswers.filter(answer => answer.isCorrect).length;
         const accuracy = (correctAnswers / this.totalQuestions) * 100;
-        
+
         // Atualizar progresso do jogo
         this.game.userProgress.completedExercises += this.totalQuestions;
         this.game.userProgress.correctAnswers += correctAnswers;
         this.game.userProgress.totalAnswers += this.totalQuestions;
-        
+
         // Atualizar progresso por tópico
         this.userAnswers.forEach(answer => {
             if (answer.isCorrect && this.game.userProgress.topicProgress[answer.topic] !== undefined) {
                 this.game.userProgress.topicProgress[answer.topic]++;
             }
         });
-        
+
         // Adicionar pontos finais
         this.game.addPoints(this.currentScore);
-        
+
         // Salvar progresso
         this.game.saveUserProgress();
-        
+
         // Mostrar resultados
         this.showResults(correctAnswers, accuracy, totalTime);
-        
+
         // Notificar sistema de gamificação
         if (this.gamification) {
             document.dispatchEvent(new CustomEvent('exerciseCompleted', {
@@ -591,17 +681,17 @@ class ExerciseController {
                 ${this.generateRecommendations(accuracy)}
             </div>
         `;
-        
+
         document.querySelector('.exercise-container').innerHTML = resultsHTML;
-        
+
         // Adicionar estilos para os resultados
         this.addResultsStyles();
     }
-    
+
 
     generateRecommendations(accuracy) {
         let recommendations = '<div class="recommendations"><h4>Recomendações:</h4><ul>';
-        
+
         if (accuracy < 60) {
             recommendations += '<li>Revise os conceitos básicos de ligações químicas</li>';
             recommendations += '<li>Assista às animações para melhor compreensão</li>';
@@ -615,7 +705,7 @@ class ExerciseController {
             recommendations += '<li>Tente exercícios de nível difícil</li>';
             recommendations += '<li>Você está pronto para tópicos avançados</li>';
         }
-        
+
         recommendations += '</ul></div>';
         return recommendations;
     }
@@ -627,18 +717,18 @@ class ExerciseController {
             case 'medium': basePoints = 15; break;
             case 'hard': basePoints = 25; break;
         }
-        
+
         // Bônus por velocidade (máximo 50% extra)
         const maxTime = 60000; // 1 minuto
         const speedBonus = Math.max(0, (maxTime - timeSpent) / maxTime) * basePoints * 0.5;
-        
+
         return Math.floor(basePoints + speedBonus);
     }
 
     recordAnswer(isCorrect, topic, timeSpent) {
         // Registrar no jogo principal
         this.game.recordAnswer(isCorrect);
-        
+
         // Disparar evento para gamificação
         if (this.gamification) {
             document.dispatchEvent(new CustomEvent('answerSubmitted', {
@@ -656,7 +746,7 @@ class ExerciseController {
         document.getElementById('current-question').textContent = this.currentQuestionIndex + 1;
         document.getElementById('total-questions').textContent = this.totalQuestions;
         document.getElementById('current-score').textContent = this.currentScore;
-        
+
         const progress = ((this.currentQuestionIndex + 1) / this.totalQuestions) * 100;
         document.getElementById('exercise-progress').style.width = `${progress}%`;
     }
@@ -666,8 +756,8 @@ class ExerciseController {
         this.userAnswers.forEach(answer => {
             topicCounts[answer.topic] = (topicCounts[answer.topic] || 0) + 1;
         });
-        
-        return Object.keys(topicCounts).reduce((a, b) => 
+
+        return Object.keys(topicCounts).reduce((a, b) =>
             topicCounts[a] > topicCounts[b] ? a : b
         );
     }
@@ -676,7 +766,7 @@ class ExerciseController {
         const seconds = Math.floor(milliseconds / 1000);
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
-        
+
         if (minutes > 0) {
             return `${minutes}m ${remainingSeconds}s`;
         }
@@ -827,7 +917,7 @@ class ExerciseController {
     getDetailedStats() {
         const topicStats = {};
         const difficultyStats = {};
-        
+
         this.userAnswers.forEach(answer => {
             // Estatísticas por tópico
             if (!topicStats[answer.topic]) {
@@ -839,13 +929,13 @@ class ExerciseController {
             }
             topicStats[answer.topic].avgTime += answer.timeSpent;
         });
-        
+
         // Calcular médias
         Object.keys(topicStats).forEach(topic => {
             topicStats[topic].avgTime /= topicStats[topic].total;
             topicStats[topic].accuracy = (topicStats[topic].correct / topicStats[topic].total) * 100;
         });
-        
+
         return {
             topicStats,
             difficultyStats,
