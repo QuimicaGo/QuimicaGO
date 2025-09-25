@@ -466,6 +466,10 @@ class QuimicaGame {
         console.log('QuimicaGame: Inicializando exercícios');
         if (window.ExerciseController) {
             try {
+                const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+                difficultyBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                });
                 window.exerciseController = new window.ExerciseController(this);
                 console.log('QuimicaGame: ExerciseController criado');
             } catch (error) {
@@ -510,7 +514,7 @@ class QuimicaGame {
             </div>
 
             <div class="question-actions">
-                <button id="submit-answer" class="btn btn-primary" disabled>
+                <button id="submit-answer" class="btn btn-primary" style="display: none;" disabled>
                     Confirmar Resposta
                 </button>
                 <button id="next-question" class="btn btn-secondary" style="display: none;">
