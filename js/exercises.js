@@ -344,6 +344,9 @@ class ExerciseController {
     }
 
     showQuestion() {
+        if (this.currentQuestions.length === 0) {
+            return;
+        }
         if (this.currentQuestionIndex >= this.currentQuestions.length) {
             this.finishExercises();
             return;
