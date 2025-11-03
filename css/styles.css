@@ -1,5 +1,5 @@
 /* =================================================================== */
-/* Reset e Configurações Globais */
+/*Configurações Globais */
 /* =================================================================== */
 * {
     margin: 0;
@@ -22,19 +22,42 @@ body {
 }
 
 @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 @keyframes transfer {
-    0% { left: 20%; opacity: 1; }
-    50% { left: 50%; opacity: 0.7; }
-    100% { left: 80%; opacity: 1; }
+    0% {
+        left: 20%;
+        opacity: 1;
+    }
+
+    50% {
+        left: 50%;
+        opacity: 0.7;
+    }
+
+    100% {
+        left: 80%;
+        opacity: 1;
+    }
 }
 
 /* Classe utilitária para esconder elementos */
@@ -130,7 +153,7 @@ body {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .nav ul {
         gap: 1rem;
     }
@@ -140,7 +163,8 @@ body {
 /* Conteúdo Principal (Main) */
 /* =================================================================== */
 .main {
-    margin-top: 80px; /* Ajuste se o header ficar maior em mobile */
+    margin-top: 80px;
+    /* Ajuste se o header ficar maior em mobile */
     min-height: calc(100vh - 80px);
 }
 
@@ -158,7 +182,7 @@ body {
 @media (max-width: 768px) {
     .main {
         /* O header cresce para 146px em 768px, ajuste o margin-top */
-        margin-top: 146px; 
+        margin-top: 146px;
     }
 }
 
@@ -295,22 +319,17 @@ body {
         text-align: center;
         padding: 2rem;
     }
-    
+
     .hero-content h2 {
         font-size: 2rem;
     }
-    
+
     .hero-buttons {
         justify-content: center;
     }
 
     .molecule-preview {
-        flex-direction: column;
         gap: 1rem;
-    }
-    
-    .electron-transfer {
-        display: none;
     }
 }
 
@@ -318,14 +337,15 @@ body {
     .hero-content h2 {
         font-size: 1.5rem;
     }
-    
+
     .btn {
         padding: 0.8rem 1.5rem;
         font-size: 0.9rem;
-        width: 100%; /* Botões ocupam a largura total */
+        width: 100%;
+        /* Botões ocupam a largura total */
         justify-content: center;
     }
-    
+
     .atom {
         width: 60px;
         height: 60px;
@@ -382,7 +402,8 @@ body {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     font-size: 1.5rem;
-    flex-shrink: 0; /* Impede que o ícone encolha */
+    flex-shrink: 0;
+    /* Impede que o ícone encolha */
 }
 
 .progress-info {
@@ -503,7 +524,8 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    display: inline-flex; /* Alterado para display: inline-flex */
+    display: inline-flex;
+    /* Alterado para display: inline-flex */
     justify-content: center;
     align-items: center;
 }
@@ -583,7 +605,7 @@ body {
 @media (max-width: 768px) {
     #animation-canvas {
         /* Reduz a altura em telas menores */
-        height: 300px; 
+        height: 300px;
     }
 
     .animation-container {
@@ -599,11 +621,12 @@ body {
     .tab-btn {
         padding: 0.8rem 1.5rem;
         font-size: 0.9rem;
-        flex-grow: 1; /* Faz os botões se esticarem */
+        flex-grow: 1;
+        /* Faz os botões se esticarem */
     }
 
     #animation-canvas {
-        height: 250px;
+        height: 300px;
     }
 }
 
@@ -676,7 +699,7 @@ body {
     text-align: center;
     margin-top: 2rem;
     /* A animação 'fadeIn' não está definida, mas mantendo a classe */
-    animation: fadeIn 0.5s ease-in-out; 
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 #quantity-selector h3 {
@@ -693,7 +716,8 @@ body {
 }
 
 .quantity-btn {
-    min-width: 160px; /* Um pouco mais largo para caber o texto */
+    min-width: 160px;
+    /* Um pouco mais largo para caber o texto */
     /* Herda estilos de .btn, mas também .difficulty-btn, ajuste se necessário */
 }
 
@@ -708,15 +732,19 @@ body {
     box-shadow: none;
 }
 
-.difficulty-btn:disabled:hover, .difficulty-btn:disabled.active,
-.quantity-btn:disabled:hover, .quantity-btn:disabled.active {
+.difficulty-btn:disabled:hover,
+.difficulty-btn:disabled.active,
+.quantity-btn:disabled:hover,
+.quantity-btn:disabled.active {
     background: #f0f0f0;
     color: #aaa;
     border-color: #ddd;
 }
 
-.difficulty-btn:disabled i, .difficulty-btn:disabled small,
-.quantity-btn:disabled i, .quantity-btn:disabled small {
+.difficulty-btn:disabled i,
+.difficulty-btn:disabled small,
+.quantity-btn:disabled i,
+.quantity-btn:disabled small {
     opacity: 0.5;
 }
 
@@ -886,9 +914,10 @@ body {
 
     .difficulty-btn {
         width: 100%;
-        max-width: 350px; /* Limita a largura em telas de tablet */
+        max-width: 350px;
+        /* Limita a largura em telas de tablet */
     }
-    
+
     .quantity-buttons {
         flex-direction: column;
         align-items: center;

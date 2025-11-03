@@ -544,21 +544,28 @@ class QuimicaGame {
         // 7. REINICIALIZAR O CONTROLLER
         this.initializeExercises();
     }
-    initializeExercises() {
-        console.log('QuimicaGame: Inicializando exercícios');
-        if (window.ExerciseController) {
-            try {
-                const difficultyBtns = document.querySelectorAll('.difficulty-btn');
-                difficultyBtns.forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                window.exerciseController = new window.ExerciseController(this);
-                console.log('QuimicaGame: ExerciseController criado');
-            } catch (error) {
-                console.error('QuimicaGame: Erro ao criar ExerciseController:', error);
-            }
+// No QuimicaGame.js
+initializeExercises() {
+    console.log('QuimicaGame: Inicializando exercícios');
+
+    // Se um controller antigo já existe, chame o cleanup() dele PRIMEIRO
+    if (window.exerciseController && typeof window.exerciseController.cleanup === 'function') {
+        window.exerciseController.cleanup();
+    }
+    if (window.ExerciseController) {
+        try {
+            const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+            difficultyBtns.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Agora sim, crie a nova instância
+            window.exerciseController = new window.ExerciseController(this);
+            console.log('QuimicaGame: ExerciseController criado');
+        } catch (error) {
+            console.error('QuimicaGame: Erro ao criar ExerciseController:', error);
         }
     }
+}
 
 
     updateProgressSection() {

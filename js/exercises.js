@@ -16,6 +16,10 @@ class ExerciseController {
         this.currentScore = 0;
         this.totalQuestions = 0;
         this.questionBank = this.initializeQuestionBank();
+        this.handleQuantityClick = this.handleQuantityClick.bind(this);
+        this.handleAnswerClick = this.handleAnswerClick.bind(this);
+        this.handleSubmitClick = this.handleSubmitClick.bind(this);
+        this.handleNextClick = this.handleNextClick.bind(this);
         this.init();
     }
 
@@ -292,7 +296,28 @@ class ExerciseController {
             ]
         };
     }
+    // Novos métodos de handle
+    handleQuantityClick(e) {
+        const quantityBtn = e.target.closest('.quantity-btn');
+        if (quantityBtn && !quantityBtn.disabled) {
+            const quantity = parseInt(quantityBtn.getAttribute('data-actual-quantity'));
+            this.startExercises(quantity);
+        }
+    }
 
+    handleAnswerClick(e) {
+        if (e.target.classList.contains('answer-option')) {
+            this.selectAnswer(e.target);
+        }
+    }
+
+    handleSubmitClick() {
+        this.submitAnswer();
+    }
+
+    handleNextClick() {
+        this.nextQuestion();
+    }
     setDifficulty(difficulty) {
         this.currentDifficulty = difficulty;
         this.currentQuestionIndex = 0;
@@ -364,7 +389,7 @@ class ExerciseController {
                         });
                     });
                     backToDifficultyButton.listenerAdded = true;
-                }   
+                }
                 quantitySelector.classList.remove('hidden');
                 gsap.fromTo(quantitySelector, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
             }
@@ -405,33 +430,17 @@ class ExerciseController {
     // ATUALIZE o método setupEventListeners
     setupEventListeners() {
         // Listener para o botão 'Confirmar Resposta'
-        document.getElementById('submit-answer')?.addEventListener('click', () => {
-            this.submitAnswer();
-        });
+        document.getElementById('submit-answer')?.addEventListener('click', this.handleSubmitClick);
 
         // Listener para o botão 'Próxima Questão'
-        document.getElementById('next-question')?.addEventListener('click', () => {
-            this.nextQuestion();
-        });
+        document.getElementById('next-question')?.addEventListener('click', this.handleNextClick);
 
         // Listener para os botões de QUANTIDADE (5, 10, 20)
-        // É este que inicia o quiz!
-        document.getElementById('quantity-selector')?.addEventListener('click', (e) => {
-            const quantityBtn = e.target.closest('.quantity-btn');
-            if (quantityBtn && !quantityBtn.disabled) {
-                const quantity = parseInt(quantityBtn.getAttribute('data-actual-quantity'));
-                this.startExercises(quantity);
-            }
-        });
+        document.getElementById('quantity-selector')?.addEventListener('click', this.handleQuantityClick);
 
         // Listener para as OPÇÕES de resposta
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('answer-option')) {
-                this.selectAnswer(e.target);
-            }
-        });
+        document.addEventListener('click', this.handleAnswerClick);
     }
-
     generateQuestionSet() {
         const questions = this.questionBank[this.currentDifficulty];
 
@@ -629,7 +638,7 @@ class ExerciseController {
         }
     }
 
-// Cole isto no seu ExerciseController.js
+    // Cole isto no seu ExerciseController.js
     showResults(correctAnswers, accuracy, totalTime) {
         const resultsHTML = `
             <div class="exercise-results">
@@ -945,7 +954,11 @@ class ExerciseController {
         `;
         document.head.appendChild(style);
     }
-
+    cleanup() {
+        console.log('ExerciseController: Limpando listeners antigos...');
+        document.getElementById('quantity-selector')?.removeEventListener('click', this.handleQuantityClick);
+        document.removeEventListener('click', this.handleAnswerClick);
+    }
     // Método para obter estatísticas detalhadas
     getDetailedStats() {
         const topicStats = {};
