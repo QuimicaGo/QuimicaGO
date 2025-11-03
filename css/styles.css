@@ -1,4 +1,6 @@
-/* Reset e configurações básicas */
+/* =================================================================== */
+/* Reset e Configurações Globais */
+/* =================================================================== */
 * {
     margin: 0;
     padding: 0;
@@ -19,7 +21,30 @@ body {
     padding: 0 20px;
 }
 
-/* Header */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes transfer {
+    0% { left: 20%; opacity: 1; }
+    50% { left: 50%; opacity: 0.7; }
+    100% { left: 80%; opacity: 1; }
+}
+
+/* Classe utilitária para esconder elementos */
+.hidden {
+    display: none !important;
+}
+
+/* =================================================================== */
+/* Header (Cabeçalho) */
+/* =================================================================== */
 .header {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -55,11 +80,6 @@ body {
 .logo h1 {
     font-size: 1.5rem;
     font-weight: 700;
-}
-
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
 }
 
 .nav ul {
@@ -104,9 +124,23 @@ body {
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-/* Main Content */
+/* --- Header: Responsivo --- */
+@media (max-width: 768px) {
+    .header .container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .nav ul {
+        gap: 1rem;
+    }
+}
+
+/* =================================================================== */
+/* Conteúdo Principal (Main) */
+/* =================================================================== */
 .main {
-    margin-top: 80px;
+    margin-top: 80px; /* Ajuste se o header ficar maior em mobile */
     min-height: calc(100vh - 80px);
 }
 
@@ -120,7 +154,23 @@ body {
     display: block;
 }
 
-/* Hero Section */
+/* --- Main: Responsivo --- */
+@media (max-width: 768px) {
+    .main {
+        /* O header cresce para 146px em 768px, ajuste o margin-top */
+        margin-top: 146px; 
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+}
+
+/* =================================================================== */
+/* Seção: Hero (Início) */
+/* =================================================================== */
 .hero {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -190,7 +240,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* Molecule Preview */
+/* Animação da Molécula no Hero */
 .hero-visual {
     display: flex;
     justify-content: center;
@@ -238,18 +288,54 @@ body {
     animation: transfer 3s ease-in-out infinite;
 }
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+/* --- Hero: Responsivo --- */
+@media (max-width: 768px) {
+    .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+    
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    .molecule-preview {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .electron-transfer {
+        display: none;
+    }
 }
 
-@keyframes transfer {
-    0% { left: 20%; opacity: 1; }
-    50% { left: 50%; opacity: 0.7; }
-    100% { left: 80%; opacity: 1; }
+@media (max-width: 480px) {
+    .hero-content h2 {
+        font-size: 1.5rem;
+    }
+    
+    .btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+        width: 100%; /* Botões ocupam a largura total */
+        justify-content: center;
+    }
+    
+    .atom {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2rem;
+    }
 }
 
-/* Progress Overview */
+/* =================================================================== */
+/* Seção: Visão Geral do Progresso (Home) */
+/* =================================================================== */
 .progress-overview {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
@@ -266,6 +352,7 @@ body {
 
 .progress-cards {
     display: grid;
+    /* auto-fit e minmax já tornam isso muito responsivo */
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
 }
@@ -295,6 +382,11 @@ body {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     font-size: 1.5rem;
+    flex-shrink: 0; /* Impede que o ícone encolha */
+}
+
+.progress-info {
+    width: 100%;
 }
 
 .progress-info h4 {
@@ -319,7 +411,26 @@ body {
     transition: width 0.3s ease;
 }
 
-/* Animation Section */
+/* --- Progresso (Home): Responsivo --- */
+@media (max-width: 768px) {
+    .progress-cards {
+        /* Força uma única coluna se o minmax não for suficiente */
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .progress-card {
+        /* Em telas muito pequenas, ícone e texto podem ficar um sobre o outro */
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+
+/* =================================================================== */
+/* Seção: Animações */
+/* =================================================================== */
 .animation-controls {
     margin-bottom: 2rem;
 }
@@ -392,6 +503,7 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    display: inline-flex; /* Alterado para display: inline-flex */
     justify-content: center;
     align-items: center;
 }
@@ -467,7 +579,38 @@ body {
     font-weight: bold;
 }
 
-/* Exercises Section */
+/* --- Animações: Responsivo --- */
+@media (max-width: 768px) {
+    #animation-canvas {
+        /* Reduz a altura em telas menores */
+        height: 300px; 
+    }
+
+    .animation-container {
+        padding: 1.5rem;
+    }
+
+    .animation-info {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+        flex-grow: 1; /* Faz os botões se esticarem */
+    }
+
+    #animation-canvas {
+        height: 250px;
+    }
+}
+
+
+/* =================================================================== */
+/* Seção: Exercícios */
+/* =================================================================== */
 .difficulty-selector {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
@@ -528,6 +671,57 @@ body {
     opacity: 0.8;
 }
 
+/* Seletor de Quantidade */
+#quantity-selector {
+    text-align: center;
+    margin-top: 2rem;
+    /* A animação 'fadeIn' não está definida, mas mantendo a classe */
+    animation: fadeIn 0.5s ease-in-out; 
+}
+
+#quantity-selector h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.quantity-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.quantity-btn {
+    min-width: 160px; /* Um pouco mais largo para caber o texto */
+    /* Herda estilos de .btn, mas também .difficulty-btn, ajuste se necessário */
+}
+
+/* Estilo para botões desativados */
+.difficulty-btn:disabled,
+.quantity-btn:disabled {
+    cursor: not-allowed;
+    background: #f0f0f0;
+    border-color: #ddd;
+    color: #aaa;
+    transform: none;
+    box-shadow: none;
+}
+
+.difficulty-btn:disabled:hover, .difficulty-btn:disabled.active,
+.quantity-btn:disabled:hover, .quantity-btn:disabled.active {
+    background: #f0f0f0;
+    color: #aaa;
+    border-color: #ddd;
+}
+
+.difficulty-btn:disabled i, .difficulty-btn:disabled small,
+.quantity-btn:disabled i, .quantity-btn:disabled small {
+    opacity: 0.5;
+}
+
+
+/* Container do Exercício */
 .exercise-container {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
@@ -613,6 +807,7 @@ body {
     justify-content: center;
 }
 
+/* Feedback */
 .feedback-container {
     background: white;
     border-radius: 15px;
@@ -649,9 +844,87 @@ body {
     color: white;
 }
 
-/* Progress Section */
+/* Painel de Contagem (Novo) */
+.question-count-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    border: 2px solid #e0e0e0;
+    background: white;
+    border-radius: 15px;
+    margin: 2rem auto 0 auto;
+    max-width: 400px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.question-count-display .count-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.question-count-display .count-info i {
+    color: #667eea;
+}
+
+#start-quiz-btn {
+    padding: 1rem 3rem;
+}
+
+
+/* --- Exercícios: Responsivo --- */
+@media (max-width: 768px) {
+    .difficulty-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .difficulty-btn {
+        width: 100%;
+        max-width: 350px; /* Limita a largura em telas de tablet */
+    }
+    
+    .quantity-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .quantity-btn {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .exercise-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .difficulty-selector {
+        padding: 1.5rem;
+    }
+
+    .exercise-container {
+        padding: 1.5rem;
+    }
+
+    .question-count-display {
+        padding: 1.5rem;
+    }
+}
+
+/* =================================================================== */
+/* Seção: Progresso (Detalhado) */
+/* =================================================================== */
 .stats-grid {
     display: grid;
+    /* auto-fit e minmax já tornam isso muito responsivo */
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
     margin-bottom: 3rem;
@@ -682,6 +955,7 @@ body {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     font-size: 1.5rem;
+    flex-shrink: 0;
 }
 
 .stat-info {
@@ -718,6 +992,7 @@ body {
 
 .achievements-grid {
     display: grid;
+    /* auto-fit e minmax já tornam isso muito responsivo */
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
 }
@@ -770,7 +1045,30 @@ body {
     margin-top: 0.5rem;
 }
 
-/* Footer */
+/* --- Progresso (Detalhado): Responsivo --- */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .achievements-section,
+    .detailed-progress {
+        padding: 1.5rem;
+    }
+}
+
+
+/* =================================================================== */
+/* Rodapé (Footer) */
+/* =================================================================== */
 .footer {
     background: rgba(255, 255, 255, 0.95);
     padding: 2rem 0;
@@ -779,94 +1077,26 @@ body {
     margin-top: 3rem;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .header .container {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .nav ul {
-        gap: 1rem;
-    }
-    
-    .hero {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-    
-    .hero-content h2 {
-        font-size: 2rem;
-    }
-    
-    .hero-buttons {
-        justify-content: center;
-    }
-    
-    .progress-cards {
-        grid-template-columns: 1fr;
-    }
-    
-    .difficulty-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .exercise-header {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .molecule-preview {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .electron-transfer {
-        display: none;
-    }
-}
 
-@media (max-width: 480px) {
-    .container {
-        padding: 0 15px;
-    }
-    
-    .hero-content h2 {
-        font-size: 1.5rem;
-    }
-    
-    .btn {
-        padding: 0.8rem 1.5rem;
-        font-size: 0.9rem;
-    }
-    
-    .atom {
-        width: 60px;
-        height: 60px;
-        font-size: 1.2rem;
-    }
-}
+/* =================================================================== */
+/* Overlay de Transição */
+/* =================================================================== */
 #transition-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%); /* Um fundo escuro, tema de jogo */
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
     z-index: 9999;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: white;
-    pointer-events: none; /* Impede que o usuário clique nela */
-    opacity: 0; /* Começa invisível */
-    visibility: hidden; /* Começa escondida */
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
 }
 
 #transition-overlay .transition-logo {
@@ -881,86 +1111,4 @@ body {
     font-weight: 500;
     letter-spacing: 2px;
     text-transform: uppercase;
-}
-/* Adicione este código no final do seu CSS */
-
-/* Classe utilitária para esconder elementos */
-.hidden {
-    display: none !important;
-}
-
-/* Estilo para o novo painel de contagem de questões */
-.question-count-display {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 2rem;
-    border: 2px solid #e0e0e0;
-    background: white;
-    border-radius: 15px;
-    margin: 2rem auto 0 auto;
-    max-width: 400px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-}
-
-.question-count-display .count-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #333;
-}
-
-.question-count-display .count-info i {
-    color: #667eea;
-}
-
-#start-quiz-btn {
-    padding: 1rem 3rem;
-}
-/* Adicione este código no final do seu CSS */
-
-#quantity-selector {
-    text-align: center;
-    margin-top: 2rem;
-    animation: fadeIn 0.5s ease-in-out; /* Reutilizando a animação anterior */
-}
-
-#quantity-selector h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    color: #333;
-}
-
-.quantity-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.quantity-btn {
-    min-width: 160px; /* Um pouco mais largo para caber o texto */
-}
-
-/* Estilo para botões desativados */
-.difficulty-btn:disabled {
-    cursor: not-allowed;
-    background: #f0f0f0;
-    border-color: #ddd;
-    color: #aaa;
-    transform: none;
-    box-shadow: none;
-}
-
-.difficulty-btn:disabled:hover, .difficulty-btn:disabled.active {
-    background: #f0f0f0;
-    color: #aaa;
-    border-color: #ddd;
-}
-
-.difficulty-btn:disabled i, .difficulty-btn:disabled small {
-    opacity: 0.5;
 }

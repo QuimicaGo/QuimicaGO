@@ -8,13 +8,6 @@ class ExerciseController {
         this.soundIncorrectAnswer.volume = 0.5;
         this.game = gameInstance;
         this.currentDifficulty = null;
-        this.soundCorrectAnswer = new Audio('assets/correct.mp3');
-        this.soundCorrectAnswer.volume = 0.5;
-
-        this.soundIncorrectAnswer = new Audio('assets/wrong.mp3');
-        this.soundIncorrectAnswer.volume = 0.5;
-        this.game = gameInstance;
-        this.currentDifficulty = null;
         this.currentQuestionIndex = 0;
         this.currentQuestions = [];
         this.userAnswers = [];
@@ -353,19 +346,32 @@ class ExerciseController {
                 });
 
                 const backToDifficultyButton = document.getElementById('back-to-difficulty-btn');
-                backToDifficultyButton.addEventListener('click', () => {
-                    difficultyButtonsContainer.classList.remove('hidden');
-                difficultyButtonsHeader.classList.remove('hidden');
-                quantitySelector.classList.add('hidden');
-                });
 
+                if (!backToDifficultyButton.listenerAdded) {
+                    backToDifficultyButton.addEventListener('click', () => {
+                        gsap.to(quantitySelector, {
+                            opacity: 0,
+                            duration: 0.3,
+                            onComplete: () => {
+                                quantitySelector.classList.add('hidden');
+                                difficultyButtonsContainer.classList.remove('hidden');
+                                difficultyButtonsHeader.classList.remove('hidden');
+                                gsap.to([difficultyButtonsContainer, difficultyButtonsHeader], {
+                                    opacity: 1,
+                                    duration: 0.4
+                                });
+                            }
+                        });
+                    });
+                    backToDifficultyButton.listenerAdded = true;
+                }   
                 quantitySelector.classList.remove('hidden');
                 gsap.fromTo(quantitySelector, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
             }
         });
     }
 
- startExercises(quantity) {
+    startExercises(quantity) {
         if (!quantity || quantity <= 0) {
             console.error("Quantidade de questões inválida para iniciar.");
             // Opcional: Voltar para a tela de seleção
@@ -373,7 +379,7 @@ class ExerciseController {
             return;
         }
         this.totalQuestions = quantity; // Define o total de questões para o quiz
-        
+
         const quantitySelector = document.getElementById('quantity-selector');
         const exerciseContainer = document.querySelector('.exercise-container');
         const difficultySelectorTitle = document.querySelector('.difficulty-selector h3');
@@ -386,8 +392,8 @@ class ExerciseController {
                 difficultySelectorTitle.classList.add('hidden');
 
                 exerciseContainer.classList.remove('hidden');
-                gsap.fromTo(exerciseContainer, {opacity: 0}, {opacity: 1, duration: 0.4});
-                
+                gsap.fromTo(exerciseContainer, { opacity: 0 }, { opacity: 1, duration: 0.4 });
+
                 this.generateQuestionSet(); // Agora usará a quantidade correta
                 this.startTime = Date.now();
                 this.showQuestion();
@@ -395,9 +401,9 @@ class ExerciseController {
             }
         });
     }
-    
+
     // ATUALIZE o método setupEventListeners
- setupEventListeners() {
+    setupEventListeners() {
         // Listener para o botão 'Confirmar Resposta'
         document.getElementById('submit-answer')?.addEventListener('click', () => {
             this.submitAnswer();
@@ -623,6 +629,7 @@ class ExerciseController {
         }
     }
 
+// Cole isto no seu ExerciseController.js
     showResults(correctAnswers, accuracy, totalTime) {
         const resultsHTML = `
             <div class="exercise-results">
@@ -677,7 +684,7 @@ class ExerciseController {
                 </div>
                 
                 <div class="results-actions">
-                    <button class="btn btn-primary" onclick="window.quimicaGame.resetExercises()"
+                    <button class="btn btn-primary" id="btn-results-retry">
                         <i class="fas fa-redo"></i>
                         Tentar Novamente
                     </button>
@@ -691,7 +698,24 @@ class ExerciseController {
             </div>
         `;
 
-        document.querySelector('.exercise-container').innerHTML = resultsHTML;
+        const container = document.querySelector('.exercise-container');
+        container.innerHTML = resultsHTML;
+
+        // ===============================================
+        // INÍCIO DA MUDANÇA (SIMPLIFICAÇÃO)
+        // ===============================================
+        // Agora, o botão "Tentar Novamente" apenas chama a função de reset.
+        // O reset (no QuimicaGame.js) é quem vai cuidar da animação.
+        document.getElementById('btn-results-retry').addEventListener('click', () => {
+            if (window.quimicaGame && typeof window.quimicaGame.resetExercises === 'function') {
+                window.quimicaGame.resetExercises();
+            } else {
+                console.error("Função window.quimicaGame.resetExercises() não encontrada.");
+            }
+        });
+        // ===============================================
+        // FIM DA MUDANÇA
+        // ===============================================
 
         // Adicionar estilos para os resultados
         this.addResultsStyles();

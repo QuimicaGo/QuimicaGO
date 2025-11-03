@@ -458,24 +458,39 @@ class QuimicaGame {
         }
     }
 
+// Cole isto no seu QuimicaGame.js
     resetExercises() {
         console.log('Quimica Game: Reiniciando exercícios');
 
-        // ESTA PARTE GARANTE QUE A TELA VOLTE AO ESTADO INICIAL CORRETO
+        // 1. SELECIONAR TODOS OS ELEMENTOS CORRETOS
         const difficultyButtonsContainer = document.querySelector('.difficulty-buttons');
+        const difficultyButtonsHeader = document.querySelector('#difficulty-buttons-header'); 
+        const difficultySelectorTitle = document.querySelector('.difficulty-selector > h3'); 
         const quantitySelector = document.getElementById('quantity-selector');
-        const difficultySelectorTitle = document.querySelector('.difficulty-selector > h3');
         const exerciseContainer = document.querySelector('.exercise-container');
 
-        if (difficultyButtonsContainer) difficultyButtonsContainer.classList.remove('hidden');
+        // 2. ESCONDER O QUE NÃO DEVE APARECER
         if (quantitySelector) quantitySelector.classList.add('hidden');
-        if (difficultySelectorTitle) difficultySelectorTitle.classList.remove('hidden');
         if (exerciseContainer) exerciseContainer.classList.add('hidden');
 
+        // 3. MOSTRAR OS ELEMENTOS DE DIFICULDADE
+        if (difficultyButtonsContainer) difficultyButtonsContainer.classList.remove('hidden');
+        if (difficultyButtonsHeader) difficultyButtonsHeader.classList.remove('hidden'); 
+        if (difficultySelectorTitle) difficultySelectorTitle.classList.remove('hidden');
+
+        // 4. (A CORREÇÃO PRINCIPAL) RESTAURAR A OPACIDADE
+        gsap.to([difficultyButtonsContainer, difficultyButtonsHeader, difficultySelectorTitle], {
+            opacity: 1,
+            duration: 0.3, // Um leve fade-in para suavizar
+            ease: "power2.out"
+        });
+
+        // 5. RESETAR BOTÕES ATIVOS
         document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
 
-        // Esta parte do seu código, que recria o HTML das questões, continua igual
-        originalExerciseHTML = `  
+        // 6. RECARREGAR O HTML DO EXERCÍCIO
+        // (O seu código original desta parte está correto)
+        const originalExerciseHTML = ` 
         <div class="exercise-header">
             <div class="exercise-progress">
                 <span>Questão <span id="current-question">1</span> de <span id="total-questions">5</span></span>
@@ -520,8 +535,13 @@ class QuimicaGame {
                 <p id="feedback-text"></p>
             </div>
         </div>
-    `; // MANTENHA SEU BLOCO HTML ORIGINAL AQUI
-        exerciseContainer.innerHTML = originalExerciseHTML;
+    `; // Fim do HTML
+
+        if (exerciseContainer) {
+            exerciseContainer.innerHTML = originalExerciseHTML;
+        }
+
+        // 7. REINICIALIZAR O CONTROLLER
         this.initializeExercises();
     }
     initializeExercises() {
@@ -540,81 +560,6 @@ class QuimicaGame {
         }
     }
 
-
-
-    // Métodos de exercícios simplificados para teste
-    selectAnswer(optionElement) {
-        console.log('QuimicaGame: Selecionando resposta');
-
-        // Remover seleção anterior
-        const options = document.querySelectorAll('.answer-option');
-        options.forEach(option => {
-            option.classList.remove('selected');
-        });
-
-        // Selecionar nova opção
-        optionElement.classList.add('selected');
-
-        // Habilitar botão de confirmar
-        const submitBtn = document.getElementById('submit-answer');
-        if (submitBtn) {
-            submitBtn.disabled = false;
-        }
-    }
-
-    submitAnswer() {
-        console.log('QuimicaGame: Submetendo resposta');
-
-        const selectedOption = document.querySelector('.answer-option.selected');
-        if (!selectedOption) {
-            console.warn('QuimicaGame: Nenhuma resposta selecionada');
-            return;
-        }
-
-        // Simular feedback básico
-        const feedbackContainer = document.getElementById('feedback-container');
-        if (feedbackContainer) {
-            feedbackContainer.style.display = 'block';
-            feedbackContainer.innerHTML = `
-                <div class="feedback-content">
-                    <div class="feedback-icon correct">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <h4>Resposta registrada!</h4>
-                    <p>Sistema de exercícios em desenvolvimento.</p>
-                </div>
-            `;
-        }
-
-        // Mostrar botão de próxima questão
-        const nextBtn = document.getElementById('next-question');
-        const submitBtn = document.getElementById('submit-answer');
-
-        if (nextBtn) nextBtn.style.display = 'inline-flex';
-        if (submitBtn) submitBtn.style.display = 'none';
-    }
-
-    nextQuestion() {
-        console.log('QuimicaGame: Próxima questão');
-
-        // Resetar interface
-        const feedbackContainer = document.getElementById('feedback-container');
-        const nextBtn = document.getElementById('next-question');
-        const submitBtn = document.getElementById('submit-answer');
-
-        if (feedbackContainer) feedbackContainer.style.display = 'none';
-        if (nextBtn) nextBtn.style.display = 'none';
-        if (submitBtn) {
-            submitBtn.style.display = 'inline-flex';
-            submitBtn.disabled = true;
-        }
-
-        // Limpar seleções
-        const options = document.querySelectorAll('.answer-option');
-        options.forEach(option => {
-            option.classList.remove('selected', 'correct', 'incorrect');
-        });
-    }
 
     updateProgressSection() {
         console.log('QuimicaGame: Atualizando seção de progresso');
