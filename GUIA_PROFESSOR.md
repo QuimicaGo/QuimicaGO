@@ -34,7 +34,7 @@ O QuímicaGame é uma ferramenta pedagógica digital desenvolvida especificament
    - Demonstre a navegação básica
 
 2. **Exploração das Animações (25 min)**
-   - Acesse a seção "Animações"
+   - Acesse a seção "Teoria"
    - Demonstre cada tipo de ligação:
      - **Ligação Iônica**: Use o exemplo NaCl
      - **Ligação Covalente**: Explique o compartilhamento
