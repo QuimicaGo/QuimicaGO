@@ -27,13 +27,34 @@ class QuimicaGame {
 
     init() {
         console.log('QuimicaGame: Inicializando...');
+
+        // 1. Carrega progresso, UI, e eventos do JOGO
         this.loadUserProgress();
-        this.setupEventListeners();
+        this.setupEventListeners(); // CUIDADO: Vamos limpar isso no próximo passo
         this.updateUI();
-        this.showSection('home');
+
+        // 2. CRIA O COMPONENTE DE AUTENTICAÇÃO
+        // O 'this' passa a instância principal do QuimicaGame para o AuthController
+        this.authController = new AuthController(this);
+
+        // 3. Decide se mostra o JOGO ou o LOGIN
+        // (Mude para 'false' para testar o login)
+        const isUserLoggedIn = false;
+
+        if (isUserLoggedIn) {
+            this.showSection('home'); // Mostra o jogo
+        } else {
+            this.authController.showLoginScreen(); // Pede ao AuthController para se mostrar
+        }
+
         console.log('QuimicaGame: Inicialização completa');
     }
-
+    onLoginSuccess() {
+        console.log('QuimicaGame: Recebi o AVISO de login com sucesso!');
+        // O AuthController já se escondeu.
+        // Agora o QuimicaGame só precisa mostrar a home.
+        this.showSection('home');
+    }
     setupEventListeners() {
         console.log('QuimicaGame: Configurando event listeners...');
 
@@ -458,14 +479,14 @@ class QuimicaGame {
         }
     }
 
-// Cole isto no seu QuimicaGame.js
+    // Cole isto no seu QuimicaGame.js
     resetExercises() {
         console.log('Quimica Game: Reiniciando exercícios');
 
         // 1. SELECIONAR TODOS OS ELEMENTOS CORRETOS
         const difficultyButtonsContainer = document.querySelector('.difficulty-buttons');
-        const difficultyButtonsHeader = document.querySelector('#difficulty-buttons-header'); 
-        const difficultySelectorTitle = document.querySelector('.difficulty-selector > h3'); 
+        const difficultyButtonsHeader = document.querySelector('#difficulty-buttons-header');
+        const difficultySelectorTitle = document.querySelector('.difficulty-selector > h3');
         const quantitySelector = document.getElementById('quantity-selector');
         const exerciseContainer = document.querySelector('.exercise-container');
 
@@ -475,7 +496,7 @@ class QuimicaGame {
 
         // 3. MOSTRAR OS ELEMENTOS DE DIFICULDADE
         if (difficultyButtonsContainer) difficultyButtonsContainer.classList.remove('hidden');
-        if (difficultyButtonsHeader) difficultyButtonsHeader.classList.remove('hidden'); 
+        if (difficultyButtonsHeader) difficultyButtonsHeader.classList.remove('hidden');
         if (difficultySelectorTitle) difficultySelectorTitle.classList.remove('hidden');
 
         // 4. (A CORREÇÃO PRINCIPAL) RESTAURAR A OPACIDADE
@@ -544,28 +565,28 @@ class QuimicaGame {
         // 7. REINICIALIZAR O CONTROLLER
         this.initializeExercises();
     }
-// No QuimicaGame.js
-initializeExercises() {
-    console.log('QuimicaGame: Inicializando exercícios');
+    // No QuimicaGame.js
+    initializeExercises() {
+        console.log('QuimicaGame: Inicializando exercícios');
 
-    // Se um controller antigo já existe, chame o cleanup() dele PRIMEIRO
-    if (window.exerciseController && typeof window.exerciseController.cleanup === 'function') {
-        window.exerciseController.cleanup();
-    }
-    if (window.ExerciseController) {
-        try {
-            const difficultyBtns = document.querySelectorAll('.difficulty-btn');
-            difficultyBtns.forEach(btn => {
-                btn.classList.remove('active');
-            });
-            // Agora sim, crie a nova instância
-            window.exerciseController = new window.ExerciseController(this);
-            console.log('QuimicaGame: ExerciseController criado');
-        } catch (error) {
-            console.error('QuimicaGame: Erro ao criar ExerciseController:', error);
+        // Se um controller antigo já existe, chame o cleanup() dele PRIMEIRO
+        if (window.exerciseController && typeof window.exerciseController.cleanup === 'function') {
+            window.exerciseController.cleanup();
+        }
+        if (window.ExerciseController) {
+            try {
+                const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+                difficultyBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                // Agora sim, crie a nova instância
+                window.exerciseController = new window.ExerciseController(this);
+                console.log('QuimicaGame: ExerciseController criado');
+            } catch (error) {
+                console.error('QuimicaGame: Erro ao criar ExerciseController:', error);
+            }
         }
     }
-}
 
 
     updateProgressSection() {
@@ -733,17 +754,4 @@ function initializeQuimicaGame() {
 }
 
 // Múltiplas estratégias de inicialização
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeQuimicaGame);
-} else {
-    // DOM já carregado
-    initializeQuimicaGame();
-}
-
-// Fallback para garantir inicialização
-window.addEventListener('load', () => {
-    if (!window.quimicaGame) {
-        console.log('Fallback: Inicializando QuímicaGame no window.load');
-        initializeQuimicaGame();
-    }
-});
+document.addEventListener('DOMContentLoaded', initializeQuimicaGame);

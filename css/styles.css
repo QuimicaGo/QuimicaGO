@@ -1141,3 +1141,241 @@ body {
     letter-spacing: 2px;
     text-transform: uppercase;
 }
+
+/* =================================================================== */
+/* Estilo do Componente de Login (FINAL & ESTILIZADO) */
+/* =================================================================== */
+
+/* Estado Padrão: O Jogo aparece */
+.header, .main, .footer {
+    display: block; /* Garante que o jogo apareça quando não está em login */
+}
+
+/* Estado Padrão: O Login NÃO aparece */
+.login-page-component {
+    display: none; 
+    opacity: 0; /* Para animações de fade, se quiser adicionar depois */
+    position: fixed; /* Fixa o login para cobrir tudo */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Garante que fique por cima de tudo */
+}
+
+/* ESTADO DE LOGIN ATIVO (Quando o body tem .on-login) */
+/* =================================================================== */
+
+/* 1. ESCONDE o Jogo (Header, Main, Footer) */
+body.on-login .header,
+body.on-login .main,
+body.on-login .footer {
+    display: none !important; /* Força o jogo a sumir */
+}
+
+/* 2. MOSTRA o Login em Tela Cheia e o Estiliza */
+body.on-login .login-page-component {
+    display: flex !important; /* Força o login a aparecer */
+    opacity: 1; /* Garante visibilidade */
+    
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    
+    /* Fundo gradiente do jogo */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    
+    /* Adiciona um pouco de padding para celulares */
+    padding: 20px; 
+    box-sizing: border-box; /* Inclui padding na largura total */
+}
+
+/* 3. Estiliza o Container do Formulário de Login/Registro */
+.login-container {
+    background-color: rgba(255, 255, 255, 0.1); /* Um fundo semi-transparente para o card */
+    padding: 40px; /* Mais espaçamento interno */
+    border-radius: 15px; /* Bordas mais arredondadas */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Sombra mais marcante */
+    text-align: center;
+    max-width: 450px; /* Limita a largura para telas maiores */
+    width: 100%; /* Ocupa toda a largura disponível (até o max-width) */
+    backdrop-filter: blur(10px); /* Efeito de vidro embaçado */
+    -webkit-backdrop-filter: blur(10px); /* Compatibilidade Safari */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Borda sutil */
+}
+
+.login-container h3 {
+    font-size: 1.8em; /* Título maior */
+    color: #fff; /* Título branco */
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+/* 4. Estiliza o Logo no Formulário */
+.login-container .logo {
+    margin-bottom: 25px;
+}
+
+.login-container .logo i {
+    font-size: 3.5em; /* Ícone maior */
+    color: #fff; /* Ícone branco */
+    margin-bottom: 10px;
+}
+
+.login-container .logo h1 {
+    font-size: 2.2em; /* Título do logo maior */
+    color: #fff;
+    margin-top: 5px;
+}
+
+/* 5. Estiliza os Grupos de Formulário (Label + Input) */
+.form-group {
+    margin-bottom: 25px; /* Mais espaço entre os campos */
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 1.1em; /* Labels maiores */
+    color: #e0e0e0; /* Cor cinza claro para o label */
+    margin-bottom: 8px; /* Espaço entre label e input */
+    font-weight: 600;
+}
+
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 14px 18px; /* Padding interno maior */
+    border: 2px solid #a8b8f2; /* Borda mais visível e colorida */
+    border-radius: 8px; /* Bordas arredondadas */
+    background-color: rgba(255, 255, 255, 0.1); /* Fundo sutil */
+    color: #fff; /* Texto digitado branco */
+    font-size: 1.1em; /* Texto do input maior */
+    transition: all 0.3s ease; /* Transição suave */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Efeito de foco (quando o input está selecionado) */
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group input[type="text"]:focus {
+    border-color: #4CAF50; /* Borda verde vibrante ao focar */
+    background-color: rgba(255, 255, 255, 0.15); /* Levemente mais claro */
+    outline: none; /* Remove a borda padrão do navegador */
+    box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.3); /* Sombra de foco verde */
+}
+
+/* Cor do placeholder */
+.form-group input::placeholder {
+    color: #a0a0a0; /* Placeholder mais escuro */
+    opacity: 0.8;
+}
+
+/* 6. Estiliza os Botões (Entrar, Registrar) */
+.btn-primary {
+    width: 100%;
+    padding: 15px 20px; /* Padding maior */
+    font-size: 1.2em; /* Texto do botão maior */
+    font-weight: bold;
+    border-radius: 8px; /* Bordas arredondadas */
+    margin-top: 20px; /* Espaço acima do botão */
+    background: linear-gradient(90deg, #4CAF50 0%, #689f38 100%); /* Gradiente verde */
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px); /* Efeito de "subir" no hover */
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(90deg, #689f38 0%, #4CAF50 100%); /* Inverte o gradiente */
+}
+
+/* 7. Estiliza os Links (Esqueci, Criar Conta, Voltar) */
+.login-links {
+    margin-top: 25px; /* Mais espaço acima dos links */
+    font-size: 1em;
+}
+
+.login-links a {
+    color: #e0e0e0; /* Links claros */
+    text-decoration: none;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+.login-links a:hover {
+    color: #4CAF50; /* Verde vibrante no hover */
+    text-decoration: underline;
+}
+
+.login-links.register-links {
+    margin-top: 30px; /* Mais espaço para o link de voltar */
+}
+
+.login-links.register-links a {
+    display: flex; /* Para centralizar o ícone e o texto */
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+}
+
+.login-links.register-links a i {
+    margin-right: 8px; /* Espaço entre ícone e texto */
+}
+
+/* 8. Esconder/Mostrar Formulários Internos */
+.login-container.hidden {
+    display: none;
+}
+
+/* =================================================================== */
+/* Responsividade para Celulares */
+/* =================================================================== */
+@media (max-width: 600px) {
+    .login-container {
+        padding: 25px; /* Reduzir padding em telas pequenas */
+        border-radius: 10px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .login-container h3 {
+        font-size: 1.5em; /* Títulos menores */
+        margin-bottom: 20px;
+    }
+
+    .login-container .logo i {
+        font-size: 2.8em; /* Ícone menor */
+    }
+
+    .login-container .logo h1 {
+        font-size: 1.8em; /* Título do logo menor */
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-size: 1em;
+    }
+
+    .form-group input[type="email"],
+    .form-group input[type="password"],
+    .form-group input[type="text"] {
+        padding: 12px 15px; /* Inputs menores */
+        font-size: 1em;
+    }
+
+    .btn-primary {
+        padding: 12px 15px; /* Botão menor */
+        font-size: 1.1em;
+    }
+
+    .login-links {
+        font-size: 0.9em; /* Links menores */
+    }
+}

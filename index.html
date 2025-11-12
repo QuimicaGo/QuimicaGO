@@ -48,9 +48,87 @@
     </header>
 
     <!-- Main Content -->
+             <section id="login" class="login-page-component">
+
+            <div id="login-view" class="login-container">
+
+                <div class="logo">
+                    <i class="fas fa-atom"></i>
+                    <h1>QuímicaGame</h1>
+                </div>
+
+                <h3>Acesse sua conta</h3>
+
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" name="login-email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">Senha</label>
+                        <input type="password" id="login-password" name="login-password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Entrar
+                    </button>
+                </form>
+
+                <div class="login-links">
+                    <a href="#" id="forgot-password-link">Esqueci minha senha</a>
+                    <a href="#" id="create-account-link">Criar conta</a>
+                </div>
+            </div>
+
+            <div id="register-view" class="login-container hidden">
+
+                <div class="logo">
+                    <i class="fas fa-atom"></i>
+                </div>
+
+                <h3>Crie sua conta</h3>
+
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-name">Nome</label>
+                        <input type="text" id="register-name" name="register-name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" name="register-email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-password">Senha</label>
+                        <input type="password" id="register-password" name="register-password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirmar Senha</label>
+                        <input type="password" id="register-confirm-password" name="register-confirm-password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i>
+                        Registrar
+                    </button>
+                </form>
+
+                <div class="login-links register-links">
+                    <a href="#" id="back-to-login-link"> <i class="fas fa-arrow-left"></i>
+                        Voltar para o Login
+                    </a>
+                </div>
+            </div>
+
+        </section>
     <main class="main">
+
         <!-- Home Section -->
-        <section id="home" class="section active">
+        <section id="home" class="section">
             <div class="container">
                 <div class="hero">
                     <div class="hero-content">
@@ -375,6 +453,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <script src="js/app-fixed.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/animations.js"></script>
     <script src="js/exercises.js"></script>
     <script src="js/gamification.js"></script>
