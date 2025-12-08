@@ -357,19 +357,54 @@ addQuestionToBank(question) {
         document.addEventListener('click', this.handleAnswerClick);
     }
 
-    generateQuestionSet() {
-        const questions = this.questionBank[this.currentDifficulty] || [];
-        const shuffled = [...questions].sort(() => Math.random() - 0.5);
-        this.currentQuestions = shuffled.slice(0, this.totalQuestions);
-
-        this.currentQuestions.forEach(question => {
-            const correctAnswer = question.options[question.correct];
-            const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
-            question.shuffledOptions = shuffledOptions;
-            question.shuffledCorrect = shuffledOptions.indexOf(correctAnswer);
-        });
+// 1. Garante que o método de embaralhar exista na classe
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
 
+    // 2. Método de Gerar Questões (Lógica Blindada)
+    generateQuestionSet() {
+        // Pega as questões do nível selecionado
+        const questionsSource = this.questionBank[this.currentDifficulty] || [];
+        
+        // Copia a lista de questões para embaralhar a ordem em que aparecem
+        let allQuestions = [...questionsSource];
+        this.shuffleArray(allQuestions);
+
+        // Pega apenas a quantidade necessária
+        this.currentQuestions = allQuestions.slice(0, this.totalQuestions);
+
+        // Agora processa cada questão
+        this.currentQuestions.forEach(question => {
+            // Passo A: Criar objetos temporários que sabem se são a resposta certa ou não
+            // O índice 'question.correct' (que é 0 nas criadas pelo professor) diz quem é o verdadeiro
+            let tempOptions = question.options.map((optText, index) => {
+                return {
+                    text: optText,
+                    isOriginalCorrect: index === question.correct // Marca: "Eu sou a certa?"
+                };
+            });
+
+            // Passo B: Embaralhar esses objetos
+            this.shuffleArray(tempOptions);
+
+            // Passo C: Separar de volta em texto e descobrir onde a certa foi parar
+            question.shuffledOptions = tempOptions.map(obj => obj.text);
+            
+            // Encontra o índice da opção que tem a marca "isOriginalCorrect"
+            question.shuffledCorrect = tempOptions.findIndex(obj => obj.isOriginalCorrect);
+            
+            // Debug para você ver no console (F12) se está funcionando
+            console.log(`Questão: ${question.question}`);
+            console.log(`Embaralhado: ${question.shuffledOptions.join(' | ')}`);
+            console.log(`A correta (índice original ${question.correct}) foi para a posição: ${question.shuffledCorrect}`);
+            console.log('---');
+        });
+    }
     showQuestion() {
         if (this.currentQuestions.length === 0) return;
         if (this.currentQuestionIndex >= this.currentQuestions.length) {
