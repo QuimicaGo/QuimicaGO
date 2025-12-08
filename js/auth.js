@@ -13,50 +13,82 @@ class AuthController {
         this.loginForm = document.getElementById('login-form');
         this.registerForm = document.getElementById('register-form');
 
+        // Elementos de Registro (Role/Senha)
+        this.passwordContainer = document.getElementById('password-fields-container');
+        this.passInput = document.getElementById('register-password');
+        this.confirmPassInput = document.getElementById('register-confirm-password');
+        this.roleInputs = document.querySelectorAll('input[name="user-role"]');
+
+        // --- CREDENCIAIS MOCADAS ---
+        this.MOCK_USERS = {
+            TEACHER: { email: 'prof@quimica.com', pass: '123456', role: 'teacher', name: 'Prof. Silva' },
+            STUDENT: { email: 'aluno@quimica.com', pass: '123456', role: 'student', name: 'João Aluno' }
+        };
+
         this.bindEvents();
     }
 
-    // Vincula todos os eventos SÓ de login
     bindEvents() {
-        // --- 1. Link: Ir para "Criar Conta" ---
+        // 1. Link: Ir para "Criar Conta"
         this.createAccountLink.addEventListener('click', (e) => {
             e.preventDefault();
             this.showRegisterView();
         });
 
-        // --- 2. Link: Voltar para "Login" ---
+        // 2. Link: Voltar para "Login"
         this.backToLoginLink.addEventListener('click', (e) => {
             e.preventDefault();
             this.showLoginView();
         });
 
-        // --- 3. Ação: Enviar Formulário de Login ---
+        // 3. Ação: Enviar Formulário de Login
         this.loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             this.handleLoginSubmit();
         });
 
-        // --- 4. Ação: Enviar Formulário de Registro ---
+        // 4. Ação: Enviar Formulário de Registro
         this.registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             this.handleRegisterSubmit();
         });
+
+        // 5. Ação: Troca de Aluno/Professor no Registro
+        if (this.roleInputs) {
+            this.roleInputs.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    this.toggleRoleFields(radio.value);
+                });
+            });
+        }
     }
 
-    // Mostra a tela de login (o componente todo)
+    // Lógica para esconder senha se for professor
+    toggleRoleFields(role) {
+        if (!this.passwordContainer) return;
+
+        if (role === 'teacher') {
+            this.passwordContainer.style.display = 'none';
+            this.passInput.removeAttribute('required');
+            this.confirmPassInput.removeAttribute('required');
+        } else {
+            this.passwordContainer.style.display = 'block';
+            this.passInput.setAttribute('required', 'true');
+            this.confirmPassInput.setAttribute('required', 'true');
+        }
+    }
+
     showLoginScreen() {
         console.log('AuthController: Mostrando tela de login');
         document.body.classList.add('on-login');
-        this.showLoginView(); // Mostra o card de login
+        this.showLoginView();
         
-        // Animação de entrada
         gsap.fromTo(this.loginView, 
             { opacity: 0, scale: 0.9 }, 
             { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' }
         );
     }
 
-    // Esconde a tela de login (o componente todo)
     hideLoginScreen() {
         console.log('AuthController: Escondendo tela de login');
         
@@ -65,24 +97,20 @@ class AuthController {
             duration: 0.3,
             onComplete: () => {
                 document.body.classList.remove('on-login');
-                this.loginComponent.classList.remove('active'); // Desliga o <section>
-                this.loginComponent.style.opacity = 1; // Reseta para a próxima vez
+                this.loginComponent.classList.remove('active'); 
+                this.loginComponent.style.opacity = 1; 
             }
         });
     }
 
-    // --- Lógica interna de troca de cards ---
-
     showLoginView() {
-        // Anima a saída da tela de registro (se estiver visível)
         gsap.to(this.registerView, { 
             opacity: 0, 
             duration: 0.3, 
             onComplete: () => {
-                this.registerView.classList.add('hidden'); // Esconde
-                this.loginView.classList.remove('hidden'); // Mostra
+                this.registerView.classList.add('hidden');
+                this.loginView.classList.remove('hidden');
                 
-                // Anima a entrada da tela de login
                 gsap.fromTo(this.loginView, 
                     { opacity: 0, y: 20 }, 
                     { opacity: 1, y: 0, duration: 0.4 }
@@ -91,15 +119,13 @@ class AuthController {
     }
 
     showRegisterView() {
-        // Anima a saída da tela de login
         gsap.to(this.loginView, { 
             opacity: 0, 
             duration: 0.3, 
             onComplete: () => {
-                this.loginView.classList.add('hidden'); // Esconde
-                this.registerView.classList.remove('hidden'); // Mostra
+                this.loginView.classList.add('hidden');
+                this.registerView.classList.remove('hidden');
                 
-                // Anima a entrada da tela de registro
                 gsap.fromTo(this.registerView, 
                     { opacity: 0, y: 20 }, 
                     { opacity: 1, y: 0, duration: 0.4 }
@@ -107,36 +133,66 @@ class AuthController {
         }});
     }
 
-    // --- Lógica de Submissão ---
-
+    // --- LOGIN COM MOCK ---
     handleLoginSubmit() {
-        console.log('AuthController: Tentando login...');
-        // Aqui iria a sua lógica de Firebase, etc.
-        // Vamos simular um sucesso:
-        
-        console.log('Login FAKE com sucesso!');
-        
-        // 1. Esconde a si mesmo (o componente de login)
+        const emailInput = document.getElementById('login-email').value;
+        const passInput = document.getElementById('login-password').value;
+
+        let userRole = 'guest';
+        let userName = 'Visitante';
+
+        // Validação das credenciais MOCADAS
+        if (emailInput === this.MOCK_USERS.TEACHER.email && passInput === this.MOCK_USERS.TEACHER.pass) {
+            userRole = 'teacher';
+            userName = this.MOCK_USERS.TEACHER.name;
+            alert(`Bem-vindo, Professor(a) ${userName}! \nVocê terá acesso ao painel de criação de questões.`);
+        } 
+        else if (emailInput === this.MOCK_USERS.STUDENT.email && passInput === this.MOCK_USERS.STUDENT.pass) {
+            userRole = 'student';
+            userName = this.MOCK_USERS.STUDENT.name;
+            alert(`Bem-vindo, Aluno(a) ${userName}! \nBons estudos.`);
+        } 
+        else {
+            alert('Credenciais inválidas! \n\nUse:\nProf: prof@quimica.com / 123456\nAluno: aluno@quimica.com / 123456');
+            return;
+        }
+
+        // Salva o usuário na instância principal do jogo
+        this.game.currentUser = {
+            name: userName,
+            role: userRole,
+            email: emailInput
+        };
+
         this.hideLoginScreen();
-        
-        // 2. Avisa o QuimicaGame que o login foi feito
         this.game.onLoginSuccess();
     }
 
+    // --- REGISTRO ---
     handleRegisterSubmit() {
-        console.log('AuthController: Tentando registrar...');
-        // 1. Validar se senhas são iguais
-        const pass = this.registerForm.querySelector('#register-password').value;
-        const confirmPass = this.registerForm.querySelector('#register-confirm-password').value;
+        const selectedRoleInput = document.querySelector('input[name="user-role"]:checked');
+        const selectedRole = selectedRoleInput ? selectedRoleInput.value : 'student';
+        const name = document.getElementById('register-name').value;
+
+        // Se for Professor
+        if (selectedRole === 'teacher') {
+            alert(`Obrigado, ${name}!\n\nRecebemos sua solicitação de cadastro como Professor.\nEntraremos em contato em breve para confirmar suas credenciais.`);
+            this.registerForm.reset();
+            this.toggleRoleFields('student'); // Reseta visual
+            this.showLoginView();
+            return;
+        }
+
+        // Se for Aluno
+        const pass = this.passInput.value;
+        const confirmPass = this.confirmPassInput.value;
 
         if (pass !== confirmPass) {
             alert('As senhas não conferem!');
             return;
         }
         
-        // 2. Aqui iria a lógica de criar conta no Firebase
-        // 3. Se der certo, avisamos e voltamos pro login
-        alert('Conta criada com sucesso! (de mentira)\n\nAgora faça o login.');
+        alert('Conta criada com sucesso! (Simulação)\n\nAgora faça o login com: aluno@quimica.com');
         this.showLoginView();
     }
 }

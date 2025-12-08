@@ -48,59 +48,74 @@
     </header>
 
     <!-- Main Content -->
-             <section id="login" class="login-page-component">
+    <section id="login" class="login-page-component">
 
-            <div id="login-view" class="login-container">
+        <div id="login-view" class="login-container">
 
-                <div class="logo">
-                    <i class="fas fa-atom"></i>
-                    <h1>QuímicaGame</h1>
-                </div>
-
-                <h3>Acesse sua conta</h3>
-
-                <form id="login-form">
-                    <div class="form-group">
-                        <label for="login-email">Email</label>
-                        <input type="email" id="login-email" name="login-email" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="login-password">Senha</label>
-                        <input type="password" id="login-password" name="login-password" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Entrar
-                    </button>
-                </form>
-
-                <div class="login-links">
-                    <a href="#" id="forgot-password-link">Esqueci minha senha</a>
-                    <a href="#" id="create-account-link">Criar conta</a>
-                </div>
+            <div class="logo">
+                <i class="fas fa-atom"></i>
+                <h1>QuímicaGame</h1>
             </div>
 
-            <div id="register-view" class="login-container hidden">
+            <h3>Acesse sua conta</h3>
 
-                <div class="logo">
-                    <i class="fas fa-atom"></i>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" name="login-email" required>
                 </div>
 
-                <h3>Crie sua conta</h3>
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" name="login-password" required>
+                </div>
 
-                <form id="register-form">
-                    <div class="form-group">
-                        <label for="register-name">Nome</label>
-                        <input type="text" id="register-name" name="register-name" required>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Entrar
+                </button>
+            </form>
+
+            <div class="login-links">
+                <a href="#" id="forgot-password-link">Esqueci minha senha</a>
+                <a href="#" id="create-account-link">Criar conta</a>
+            </div>
+        </div>
+
+        <div id="register-view" class="login-container hidden">
+
+            <div class="logo">
+                <i class="fas fa-atom"></i>
+            </div>
+
+            <h3>Crie sua conta</h3>
+
+            <form id="register-form">
+                <div class="form-group">
+                    <label>Você é:</label>
+                    <div style="display: flex; gap: 15px; margin-top: 5px;">
+                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                            <input type="radio" name="user-role" value="student" checked>
+                            Aluno
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                            <input type="radio" name="user-role" value="teacher">
+                            Professor
+                        </label>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="register-email">Email</label>
-                        <input type="email" id="register-email" name="register-email" required>
-                    </div>
+                <div class="form-group">
+                    <label for="register-name">Nome</label>
+                    <input type="text" id="register-name" name="register-name" required>
+                </div>
 
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" name="register-email" required>
+                </div>
+
+                <div id="password-fields-container">
                     <div class="form-group">
                         <label for="register-password">Senha</label>
                         <input type="password" id="register-password" name="register-password" required>
@@ -110,21 +125,21 @@
                         <label for="register-confirm-password">Confirmar Senha</label>
                         <input type="password" id="register-confirm-password" name="register-confirm-password" required>
                     </div>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-user-plus"></i>
-                        Registrar
-                    </button>
-                </form>
-
-                <div class="login-links register-links">
-                    <a href="#" id="back-to-login-link"> <i class="fas fa-arrow-left"></i>
-                        Voltar para o Login
-                    </a>
                 </div>
-            </div>
 
-        </section>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    Registrar
+                </button>
+            </form>
+            <div class="login-links register-links">
+                <a href="#" id="back-to-login-link"> <i class="fas fa-arrow-left"></i>
+                    Voltar para o Login
+                </a>
+            </div>
+        </div>
+
+    </section>
     <main class="main">
 
         <!-- Home Section -->
@@ -440,6 +455,67 @@
                 </div>
             </div>
         </section>
+        <div id="create-question-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-plus-circle"></i> Nova Questão</h3>
+                    <button id="close-modal-btn" class="close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <form id="create-question-form">
+                    <div class="form-group">
+                        <label>Tópico</label>
+                        <select id="new-q-topic" required>
+                            <option value="ionic">Ligação Iônica</option>
+                            <option value="covalent">Ligação Covalente</option>
+                            <option value="metallic">Ligação Metálica</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nível de Dificuldade</label>
+                        <select id="new-q-difficulty" required>
+                            <option value="easy">Fácil</option>
+                            <option value="medium">Médio</option>
+                            <option value="hard">Difícil</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Enunciado da Questão</label>
+                        <textarea id="new-q-text" rows="3" placeholder="Ex: Qual ligação ocorre no sal de cozinha?"
+                            required></textarea>
+                    </div>
+
+                    <div class="form-group highlight-input">
+                        <label>Resposta CORRETA</label>
+                        <input type="text" id="new-q-correct" placeholder="Esta será a resposta certa" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Resposta Errada 1</label>
+                        <input type="text" id="new-q-wrong1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Resposta Errada 2</label>
+                        <input type="text" id="new-q-wrong2" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Resposta Errada 3</label>
+                        <input type="text" id="new-q-wrong3" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Explicação (Feedback)</label>
+                        <textarea id="new-q-explanation" rows="2"
+                            placeholder="Explique por que a resposta está certa..."></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" id="cancel-create-btn" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Questão</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
