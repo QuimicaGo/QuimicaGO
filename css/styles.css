@@ -1555,21 +1555,26 @@ body.on-login .login-page-component {
     justify-content: center;
     align-items: center;
 }
+
+/* Atualizado para incluir o Questionário (#create-quiz-modal) */
 #create-question-modal input,
 #create-question-modal textarea,
-#create-question-modal select {
-    color: #333333 !important;       
-    background-color: #ffffff !important; 
-    border: 1px solid #cccccc;       
+#create-question-modal select,
+#create-quiz-modal input,
+#create-quiz-modal textarea,
+#create-quiz-modal select {
+    color: #333333 !important;
+    background-color: #ffffff !important;
+    border: 1px solid #cccccc;
 }
 
 #create-question-modal input::placeholder,
-#create-question-modal textarea::placeholder {
-    color: #888888 !important;       /* Placeholder cinza médio */
-    opacity: 1;
+#create-quiz-modal input::placeholder {
+    color: #888888 !important;
 }
 
-#create-question-modal select option {
+#create-question-modal select option,
+#create-quiz-modal select option {
     color: #333333;
     background-color: #ffffff;
 }

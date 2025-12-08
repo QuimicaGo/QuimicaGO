@@ -49,18 +49,17 @@ class ExerciseController {
     }
 
 injectTeacherTools() {
-        // 1. Remove o painel antigo se ele já existir (CORREÇÃO FUNDAMENTAL)
-        // Isso remove o botão "velho" que perdeu a referência
+        // 1. Limpeza: Remove painel e modal antigo se já existirem (para evitar duplicatas)
         const existingPanel = document.querySelector('.teacher-panel');
-        if (existingPanel) {
-            existingPanel.remove();
-        }
+        if (existingPanel) existingPanel.remove();
+        
+        const existingQuizModal = document.getElementById('create-quiz-modal');
+        if (existingQuizModal) existingQuizModal.remove();
 
         const difficultySection = document.querySelector('.difficulty-selector');
-        
-        // Verifica se a seção de dificuldade existe antes de tentar inserir
         if (!difficultySection) return;
 
+        // 2. Cria o Painel com os DOIS botões
         const teacherPanel = document.createElement('div');
         teacherPanel.className = 'teacher-panel';
         teacherPanel.style.cssText = `
@@ -69,23 +68,108 @@ injectTeacherTools() {
         `;
 
         teacherPanel.innerHTML = `
-            <h4 style="color: #1565c0; margin-bottom: 10px;"><i class="fas fa-chalkboard-teacher"></i> Painel do Professor</h4>
-            <p style="font-size: 0.9em; margin-bottom: 10px; color: #555;">Adicione novas questões ao banco de dados.</p>
-            <button id="btn-create-question" class="btn btn-primary" style="background: #2196f3;">
-                <i class="fas fa-plus-circle"></i> Criar Nova Questão
-            </button>
+            <h4 style="color: #1565c0; margin-bottom: 10px;">
+                <i class="fas fa-chalkboard-teacher"></i> Painel do Professor
+            </h4>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button id="btn-create-question" class="btn btn-primary" style="background: #2196f3;">
+                    <i class="fas fa-plus-circle"></i> Nova Questão
+                </button>
+                <button id="btn-create-quiz" class="btn btn-primary" style="background: #00897b;">
+                    <i class="fas fa-list-alt"></i> Novo Questionário
+                </button>
+            </div>
         `;
 
         difficultySection.insertBefore(teacherPanel, difficultySection.firstChild);
+
+        // 3. Cria e injeta o HTML do NOVO MODAL DE QUESTIONÁRIO no final do body
+        const quizModalHTML = `
+            <div id="create-quiz-modal" class="modal-overlay hidden">
+                <div class="modal-content" style="max-width: 400px;">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-tasks"></i> Configurar Questionário</h3>
+                        <button id="close-quiz-btn" class="close-btn"><i class="fas fa-times"></i></button>
+                    </div>
+                    <form id="create-quiz-form">
+                        <div class="form-group">
+                            <label>Tema do Questionário</label>
+                            <select id="quiz-topic" required>
+                                <option value="all">Todos os Tópicos (Misto)</option>
+                                <option value="ionic">Ligação Iônica</option>
+                                <option value="covalent">Ligação Covalente</option>
+                                <option value="metallic">Ligação Metálica</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dificuldade</label>
+                            <select id="quiz-difficulty" required>
+                                <option value="mixed">Mista (Aleatória)</option>
+                                <option value="easy">Fácil</option>
+                                <option value="medium">Médio</option>
+                                <option value="hard">Difícil</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Quantidade de Questões</label>
+                            <input type="number" id="quiz-quantity" min="1" max="50" value="10" required>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button type="button" id="cancel-quiz-btn" class="btn btn-secondary">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" style="background: #00897b;">Gerar Questionário</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
         
-        // Listener para abrir o modal
-        const btnCreate = document.getElementById('btn-create-question');
-        if (btnCreate) {
-            // Remove qualquer listener anterior por segurança (embora remover o elemento já resolva)
-            btnCreate.removeEventListener('click', this.openCreateModal);
-            // Adiciona o novo listener vinculado a ESTA instância do controlador
-            btnCreate.addEventListener('click', this.openCreateModal);
-        }
+        document.body.insertAdjacentHTML('beforeend', quizModalHTML);
+
+        // 4. Configura os Listeners (Eventos)
+        
+        // Listener para Questão (Antigo)
+        const btnCreateQ = document.getElementById('btn-create-question');
+        if (btnCreateQ) btnCreateQ.addEventListener('click', this.openCreateModal);
+
+        // Listener para Questionário (Novo)
+        const btnCreateQuiz = document.getElementById('btn-create-quiz');
+        if (btnCreateQuiz) btnCreateQuiz.addEventListener('click', this.openQuizModal.bind(this));
+        
+        // Listeners do Modal de Questionário
+        document.getElementById('close-quiz-btn').addEventListener('click', this.closeQuizModal.bind(this));
+        document.getElementById('cancel-quiz-btn').addEventListener('click', this.closeQuizModal.bind(this));
+        document.getElementById('create-quiz-form').addEventListener('submit', this.handleSaveQuiz.bind(this));
+    }
+    // --- Métodos do Modal de Questionário ---
+
+    openQuizModal() {
+        const modal = document.getElementById('create-quiz-modal');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    closeQuizModal() {
+        const modal = document.getElementById('create-quiz-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    handleSaveQuiz(e) {
+        e.preventDefault();
+        
+        // Captura os dados selecionados
+        const topic = document.getElementById('quiz-topic').value;
+        const difficulty = document.getElementById('quiz-difficulty').value;
+        const quantity = document.getElementById('quiz-quantity').value;
+
+        // Por enquanto, apenas mostra que capturou (como solicitado)
+        const topicName = topic === 'all' ? 'Todos' : topic;
+        const diffName = difficulty === 'mixed' ? 'Mista' : difficulty;
+
+        alert(`SUCESSO!\n\nDados capturados para o questionário:\n- Tema: ${topicName}\n- Dificuldade: ${diffName}\n- Questões: ${quantity}`);
+        
+        this.closeQuizModal();
     }
     openCreateModal() {
         const modal = document.getElementById('create-question-modal');
